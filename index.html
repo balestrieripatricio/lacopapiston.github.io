@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Copa Pistón</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+
+body { 
+    font-family: 'Roboto', sans-serif; 
+    margin:0; 
+    padding:0; 
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+h1,h2 { text-align:center; margin:5px 0; }
+.container { 
+    max-width:1000px; 
+    margin:20px auto; 
+    background:white; 
+    padding:20px; 
+    border-radius:12px; 
+    box-shadow:0 0 15px rgba(0,0,0,0.2); 
+}
+.menu-inicio { 
+    text-align:center; 
+    padding:50px 20px; 
+    color:white; 
+}
+.menu-inicio button { 
+    padding:15px 30px; 
+    font-size:18px; 
+    border:none; 
+    border-radius:12px; 
+    cursor:pointer; 
+    margin:10px; 
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+.menu-inicio button:hover {
+    transform: translateY(-2px);
+}
+.btn-liga { background: #3399ff; color:white; }
+.btn-pakistani { background: #33cc66; color:white; }
+.btn-ets { background: #9933cc; color:white; }
+.btn-supercopa { background: #ffcc00; color:black; }
+.btn-volver { background: #6c757d; color:white; padding: 10px 20px; font-size: 14px; margin-bottom: 15px; }
+
+.fecha { margin:10px 0; border-radius:8px; background:#f7f7f7; padding:10px; }
+.fecha-header { display:flex; justify-content:space-between; cursor:pointer; background:#e0e0e0; padding:5px 10px; border-radius:6px; font-weight:bold; }
+.partido { display:flex; justify-content:space-between; align-items:center; padding:5px 10px; margin:5px 0; background:#fff; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
+button.generar { padding:5px 10px; border:none; border-radius:6px; cursor:pointer; background:#28a745; color:white; }
+button.generar:disabled { background:#ccc; cursor:not-allowed; }
+button.simular { background:#17a2b8 !important; }
+
+/* --- CORRECCIÓN IMÁGENES EN TODOS LOS TORNEOS --- */
+.team-cell img, .equipo-con-escudo img { 
+    width: 24px !important; 
+    height: 24px !important; 
+    border-radius: 4px; 
+    margin-right: 6px; 
+    vertical-align: middle;
+    object-fit: contain;
+}
+.tabla-liga img {
+    width: 20px !important;
+    height: 20px !important;
+    margin-right: 5px;
+}
+/* GARANTIZAR TAMAÑO EN TODOS LOS TORNEOS */
+#liga img, #pakistani img, #ets img, #supercopa img,
+.liga img, .pakistani img, .ets img, .supercopa img {
+    max-width: 24px !important;
+    max-height: 24px !important;
+    width: auto !important;
+    height: auto !important;
+    border-radius: 4px;
+    margin-right: 6px;
+    vertical-align: middle;
+    object-fit: contain;
+}
+
+.torneo { margin-top:20px; padding:15px; border-radius:12px; display:none; position: relative; }
+.liga { background: linear-gradient(to bottom,#66ccff,#3399ff); }
+.pakistani { background: linear-gradient(to bottom,#66ff99,#33cc66); }
+.ets { background: linear-gradient(to bottom,#cc99ff,#9933cc); }
+.supercopa { background: linear-gradient(to bottom,#fff066,#ffcc33); }
+.hidden { display:none; }
+.tabla-liga { width:100%; border-collapse:collapse; margin-top:10px; }
+.tabla-liga th, .tabla-liga td { padding:5px; border:1px solid #ccc; text-align:center; font-size:14px; }
+.tabla-liga tr:nth-child(even) { background:#f9f9f9; }
+.jugado { background:#e8f5e8 !important; }
+.reiniciar-btn { background:#dc3545 !important; color:white !important; margin-top:20px; }
+.equipo-con-escudo { display:flex; align-items:center; gap:8px; justify-content: flex-start; }
+.resultado-simulado { color: #17a2b8 !important; font-style: italic; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// --- SISTEMA DE ROLES PATO vs FEMBOY ---
+function mostrarSeleccionRol() {
+    const html = `
+        <div style="text-align:center; padding:50px; background:linear-gradient(135deg, #667eea, #764ba2); color:white; min-height:100vh;">
+            <h1 style="font-size:2.5em;">🏆 COPA PISTÓN 🏆</h1>
+            <p style="opacity:0.8;">"tuvimos que estudiar programación para hacer esto sino RedBullSida se afanaba todas las copas"</p>
+            
+            <div style="background:white; color:black; padding:30px; border-radius:15px; margin:30px auto; max-width:500px; box-shadow:0 10px 30px rgba(0,0,0,0.3);">
+                <h2>¿Quién sos en la Copa Pistón?</h2>
+                
+                <button onclick="elegirPato()" style="background:linear-gradient(135deg, #FFD700, #FFA500); color:black; border:none; padding:20px; margin:15px; border-radius:10px; font-size:18px; font-weight:bold; cursor:pointer; width:300px;">
+                    🐐 PATO (GOAT) - Modo Admin
+                </button>
+                <p style="font-size:14px; color:#666;">Acceso total para cambiar resultados</p>
+                
+                <br>
+                
+                <button onclick="elegirFemboy()" style="background:linear-gradient(135deg, #FFB6C1, #FF69B4); color:white; border:none; padding:20px; margin:15px; border-radius:10px; font-size:18px; font-weight:bold; cursor:pointer; width:300px;">
+                    🎀 FEMBOY - Modo Lectura
+                </button>
+                <p style="font-size:14px; color:#666;">Solo podés ver y simular (no guarda)</p>
+            </div>
+        </div>
+    `;
+    document.getElementById('app').innerHTML = html;
+}
+
+function elegirFemboy() {
+    localStorage.setItem('esAdmin', 'false');
+    iniciarAplicacion();
+}
+
+function elegirPato() {
+    const password = prompt("🐐 ACCESO PATO (GOAT)\nIngresá la clave secreta del admin:");
+    // 🚨 ¡CAMBIÁ ESTA CONTRASEÑA POR UNA TUYA! 🚨
+    if (password === "PampaATH") {
+        localStorage.setItem('esAdmin', 'true');
+        alert("✅ ¡Acceso concedido, PATO! Modo admin activado.");
+        iniciarAplicacion();
+    } else {
+        const html = `
+            <div style="text-align:center; padding:50px; background:linear-gradient(135deg, #ff4444, #cc0000); color:white; min-height:100vh;">
+                <h1 style="font-size:3em; color:white;">🚨 ¡IIIIH TÍPICO DE FEMBOY! 🚨</h1>
+                <p style="font-size:1.5em;">Volvé para atrás piba</p>
+                <button onclick="mostrarSeleccionRol()" style="background:white; color:red; border:none; padding:15px 30px; border-radius:10px; font-size:18px; font-weight:bold; cursor:pointer; margin-top:30px;">
+                    🔙 VOLVER ATRÁS
+                </button>
+            </div>
+        `;
+        document.getElementById('app').innerHTML = html;
+    }
+}
+
+// --- APLICACIÓN PRINCIPAL ---
+function iniciarAplicacion() {
+    const esAdmin = localStorage.getItem('esAdmin') === 'true';
+    
+    const appHTML = `
+        <div class="menu-inicio" id="menuInicio">
+            <h1 id="tituloMenu">BIENVENIDOS A LA COPA PISTÓN</h1>
+            <p style="font-size:14px; opacity:0.9;">"tuvimos que estudiar programación para hacer esto sino RedBullSida se afanaba todas las copas"</p>
+            <button id="btnLiga" class="btn-liga">Liga</button>
+            <button id="btnPakistani" class="btn-pakistani">Copa Pakistani</button>
+            <button id="btnETS" class="btn-ets">Copa ETS</button>
+            <button id="btnSupercopa" class="btn-supercopa">Supercopa</button>
+            <br>
+            <button class="reiniciar-btn" onclick="reiniciarTemporada()">🔄 NUEVA TEMPORADA</button>
+            ${!esAdmin ? 
+                '<p style="color:#17a2b8; margin-top:10px;">🔮 Modo Simulación - Los resultados no se guardan</p>' : 
+                '<p style="color:green; margin-top:10px;">⚡ Modo Admin Activado</p>'
+            }
+        </div>
+
+        <div class="container" id="torneosContainer">
+            <div class="torneo liga" id="liga"></div>
+            <div class="torneo pakistani" id="pakistani"></div>
+            <div class="torneo ets" id="ets"></div>
+            <div class="torneo supercopa" id="supercopa"></div>
+            <h2>Subir escudos de equipos ${!esAdmin ? '(Solo Admin)' : ''}</h2>
+            <div id="escudos"></div>
+        </div>
+    `;
+    
+    document.getElementById('app').innerHTML = appHTML;
+    inicializarAplicacion(esAdmin);
+}
+
+// --- FUNCIÓN PARA GENERAR RESULTADO (SIMULADO O REAL) ---
+function generarResultadoSimulado() {
+    let local = 0, visitante = 0;
+    for(let i = 0; i < 5; i++) {
+        const tiro = Math.floor(Math.random() * 3);
+        if(tiro === 1) local++;
+        else if(tiro === 2) visitante++;
+    }
+    return { local, visitante };
+}
+
+// --- INICIALIZAR APLICACIÓN ---
+function inicializarAplicacion(esAdmin) {
+    // --- EQUIPOS ---
+    const equipos = ["ATHLETICO","AVENA","SOMBRERO DE PAJA","COSQUIN","MDV","RBS","RD","COCODRILOS","USOCY","MANTECA","RHINO","EMI","RAJASPANDAV","PORONGASURIO","PUNGASAURIO","ILOVECP","JORGE","JOSHUA"];
+
+    // --- INICIALIZAR DATOS ---
+    let tablaLiga = JSON.parse(localStorage.getItem('tablaLiga')) || {};
+    let partidosJugados = JSON.parse(localStorage.getItem('partidosJugados')) || {};
+    let fixtureLiga = JSON.parse(localStorage.getItem('fixtureLiga')) || null;
+
+    // Inicializar tabla si no existe
+    if (Object.keys(tablaLiga).length === 0) {
+        equipos.forEach(e => {
+            tablaLiga[e] = {P:0, G:0, E:0, PD:0, GF:0, GC:0, D:0};
+        });
+    }
+
+    // --- SECCIONES ---
+    const ligaDiv = document.getElementById('liga');
+    const pakistaniDiv = document.getElementById('pakistani');
+    const etsDiv = document.getElementById('ets');
+    const superDiv = document.getElementById('supercopa');
+    const torneos = [ligaDiv,pakistaniDiv,etsDiv,superDiv];
+
+    document.getElementById('btnLiga').addEventListener('click',()=>mostrarTorneo('liga'));
+    document.getElementById('btnPakistani').addEventListener('click',()=>mostrarTorneo('pakistani'));
+    document.getElementById('btnETS').addEventListener('click',()=>mostrarTorneo('ets'));
+    document.getElementById('btnSupercopa').addEventListener('click',()=>mostrarTorneo('supercopa'));
+
+    function mostrarTorneo(nombre){
+        torneos.forEach(t=>t.style.display='none');
+        document.getElementById('menuInicio').style.display = 'none';
+        if(nombre==='liga') {
+            ligaDiv.style.display='block';
+            generarLiga();
+        }
+        if(nombre==='pakistani') {
+            pakistaniDiv.style.display='block';
+            cargarDatosPakistani();
+            if (pakistaniFases.octavos.length > 0) {
+                const faseActual = pakistaniFases.campeon ? 'final' : 
+                                 pakistaniFases.final.length > 0 ? 'final' :
+                                 pakistaniFases.semis.length > 0 ? 'semis' :
+                                 pakistaniFases.cuartos.length > 0 ? 'cuartos' : 'octavos';
+                mostrarPakistani(faseActual);
+            } else {
+                iniciarPakistani();
+            }
+        }
+        if(nombre==='ets') {
+            etsDiv.style.display='block';
+            cargarDatosETS();
+            if (etsFases.cuartos.length > 0) {
+                const faseActual = etsFases.campeon ? 'final' : 
+                                 etsFases.final.length > 0 ? 'final' :
+                                 etsFases.semis.length > 0 ? 'semis' : 'cuartos';
+                const tipoPartido = etsFases[faseActual].every(p => p.ida.jugado) ? 'vuelta' : 'ida';
+                mostrarETS(faseActual, tipoPartido);
+            } else {
+                iniciarETS();
+            }
+        }
+        if(nombre==='supercopa') {
+            superDiv.style.display='block';
+            iniciarSupercopa();
+        }
+    }
+
+    // --- CARGA ESCUDOS (SOLO ADMIN) ---
+    const escudosDiv = document.getElementById('escudos');
+    if (esAdmin) {
+        equipos.forEach(e=>{
+            const div = document.createElement('div');
+            div.innerHTML = `${e}: <input type='file' accept='image/*' onchange="loadShield(event,'${e}')">`;
+            escudosDiv.appendChild(div);
+        });
+    } else {
+        escudosDiv.innerHTML = '<p style="color: #666;">🔒 Solo el PATO puede subir escudos</p>';
+    }
+    
+    window.loadShield = function(e,team){
+        if (!esAdmin) {
+            alert("❌ Solo el PATO puede subir escudos");
+            return;
+        }
+        const file = e.target.files[0];
+        if(file){
+            const reader = new FileReader();
+            reader.onload=function(ev){ 
+                localStorage.setItem('escudo_'+team,ev.target.result);
+                if(ligaDiv.style.display === 'block') generarLiga();
+                if(pakistaniDiv.style.display === 'block') mostrarPakistani('octavos');
+                if(etsDiv.style.display === 'block') mostrarETS('cuartos', 'ida');
+                if(superDiv.style.display === 'block') iniciarSupercopa();
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function getEscudo(equipo) {
+        const escudo = localStorage.getItem('escudo_'+equipo);
+        if (escudo) {
+            return `<img src="${escudo}" alt="${equipo}" title="${equipo}">`;
+        }
+        return '';
+    }
+
+    // --- BOTÓN VOLVER ---
+    function crearBotonVolver() {
+        const btnVolver = document.createElement('button');
+        btnVolver.className = 'btn-volver';
+        btnVolver.innerHTML = '🔙 Volver al Menú';
+        btnVolver.onclick = () => {
+            torneos.forEach(t=>t.style.display='none');
+            document.getElementById('menuInicio').style.display = 'block';
+        };
+        return btnVolver;
+    }
+
+    // --- ALGORITMO FIXTURE LIGA (Round Robin) ---
+    function generarFixture() {
+        const teams = [...equipos];
+        if (teams.length % 2 !== 0) teams.push('DESCANSO');
+        
+        const fixture = [];
+        const numRounds = teams.length - 1;
+        const half = teams.length / 2;
+        
+        for (let round = 0; round < numRounds; round++) {
+            const fecha = [];
+            for (let i = 0; i < half; i++) {
+                const local = teams[i];
+                const visitante = teams[teams.length - 1 - i];
+                if (local !== 'DESCANSO' && visitante !== 'DESCANSO') {
+                    if (round % 2 === 0) {
+                        fecha.push({local, visitante, jugado: false});
+                    } else {
+                        fecha.push({local: visitante, visitante: local, jugado: false});
+                    }
+                }
+            }
+            fixture.push(fecha);
+            teams.splice(1, 0, teams.pop());
+        }
+        return fixture;
+    }
+
+    // --- LIGA ---
+    function generarLiga(){
+        ligaDiv.innerHTML = "";
+        const btnVolver = crearBotonVolver();
+        ligaDiv.appendChild(btnVolver);
+        
+        const titulo = document.createElement('h2');
+        titulo.innerHTML = '⚽ LIGA ⚽';
+        ligaDiv.appendChild(titulo);
+        
+        if (!fixtureLiga) {
+            fixtureLiga = generarFixture();
+            localStorage.setItem('fixtureLiga', JSON.stringify(fixtureLiga));
+        }
+        
+        fixtureLiga.forEach((fecha, indexFecha) => {
+            fecha.forEach(partido => {
+                const key = `${partido.local}-${partido.visitante}`;
+                partido.jugado = partidosJugados[key] || false;
+            });
+        });
+
+        // TABLA ACTUALIZADA CON ESCUDOS (TAMAÑO CORREGIDO)
+        const tabla = document.createElement('table');
+        tabla.classList.add('tabla-liga');
+        tabla.innerHTML="<tr><th>Pos</th><th>Equipo</th><th>P</th><th>G</th><th>E</th><th>Pd</th><th>GF</th><th>GC</th><th>D</th></tr>";
+        
+        const equiposOrdenados = [...equipos].sort((a, b) => {
+            if (tablaLiga[b].P !== tablaLiga[a].P) return tablaLiga[b].P - tablaLiga[a].P;
+            if (tablaLiga[b].D !== tablaLiga[a].D) return tablaLiga[b].D - tablaLiga[a].D;
+            return tablaLiga[b].GF - tablaLiga[a].GF;
+        });
+        
+        equiposOrdenados.forEach((eq, index) => {
+            const tr = document.createElement('tr');
+            const escudoHTML = getEscudo(eq);
+            tr.innerHTML=`<td>${index + 1}</td><td class="equipo-con-escudo">${escudoHTML}${eq}</td><td>${tablaLiga[eq].P}</td><td>${tablaLiga[eq].G}</td><td>${tablaLiga[eq].E}</td><td>${tablaLiga[eq].PD}</td><td>${tablaLiga[eq].GF}</td><td>${tablaLiga[eq].GC}</td><td>${tablaLiga[eq].D}</td>`;
+            tabla.appendChild(tr);
+        });
+        ligaDiv.appendChild(tabla);
+
+        // FECHAS (NO SE CIERRAN AL GENERAR)
+        fixtureLiga.forEach((fechaPartidos, numFecha) => {
+            const fechaDiv = document.createElement('div');
+            fechaDiv.classList.add('fecha');
+            const header = document.createElement('div');
+            header.classList.add('fecha-header');
+            header.innerHTML=`<span>Fecha ${numFecha + 1}</span><span>▼</span>`;
+            const partidosDiv = document.createElement('div');
+            partidosDiv.classList.add('hidden');
+            
+            fechaPartidos.forEach(partido => {
+                const p = document.createElement('div');
+                p.classList.add('partido');
+                if (partido.jugado) p.classList.add('jugado');
+                
+                const key = `${partido.local}-${partido.visitante}`;
+                const resultado = partidosJugados[key] || null;
+                
+                const escudoLocal = getEscudo(partido.local);
+                const escudoVisitante = getEscudo(partido.visitante);
+                
+                const botonTexto = esAdmin ? 
+                    (partido.jugado ? 'Jugado' : 'Generar') : 
+                    (partido.jugado ? 'Jugado' : 'Simular');
+                
+                const botonClase = esAdmin ? 'generar' : (partido.jugado ? 'generar' : 'generar simular');
+                
+                p.innerHTML = `
+                    <span class="team-cell">${escudoLocal}${partido.local} vs ${partido.visitante}${escudoVisitante}</span>
+                    <button class="${botonClase}" ${partido.jugado ? 'disabled' : ''} 
+                        onclick="window.generarResultadoLiga('${partido.local}','${partido.visitante}', ${numFecha}, ${esAdmin})">
+                        ${botonTexto}
+                    </button>
+                    <span class="result ${!esAdmin && !partido.jugado ? 'resultado-simulado' : ''}">
+                        ${resultado ? `${resultado.local}-${resultado.visitante}` : ''}
+                    </span>
+                `;
+                partidosDiv.appendChild(p);
+            });
+            
+            header.addEventListener('click',()=>{
+                partidosDiv.classList.toggle('hidden');
+            });
+            fechaDiv.appendChild(header);
+            fechaDiv.appendChild(partidosDiv);
+            ligaDiv.appendChild(fechaDiv);
+        });
+    }
+
+    window.generarResultadoLiga = function(localEq, visitanteEq, numFecha, esAdminParam){
+        const resultado = generarResultadoSimulado();
+        
+        if (!esAdminParam) {
+            // MODO FEMBOY: Solo muestra resultado simulado
+            const partidos = document.querySelectorAll('.partido');
+            partidos.forEach(partido => {
+                const teams = partido.querySelector('.team-cell').textContent;
+                if (teams.includes(localEq) && teams.includes(visitanteEq)) {
+                    const span = partido.querySelector('.result');
+                    span.innerHTML = `<span class="resultado-simulado">Simulado: ${resultado.local}-${resultado.visitante}</span>`;
+                    span.style.color = '#17a2b8';
+                    span.style.fontStyle = 'italic';
+                }
+            });
+            return;
+        }
+        
+        // MODO PATO: Guarda resultado real
+        const key = `${localEq}-${visitanteEq}`;
+        partidosJugados[key] = resultado;
+        
+        tablaLiga[localEq].GF += resultado.local;
+        tablaLiga[localEq].GC += resultado.visitante;
+        tablaLiga[visitanteEq].GF += resultado.visitante;
+        tablaLiga[visitanteEq].GC += resultado.local;
+        
+        if(resultado.local > resultado.visitante) {
+            tablaLiga[localEq].P += 3;
+            tablaLiga[localEq].G++;
+            tablaLiga[visitanteEq].PD++;
+        } else if(resultado.local < resultado.visitante) {
+            tablaLiga[visitanteEq].P += 3;
+            tablaLiga[visitanteEq].G++;
+            tablaLiga[localEq].PD++;
+        } else {
+            tablaLiga[localEq].P++;
+            tablaLiga[visitanteEq].P++;
+            tablaLiga[localEq].E++;
+            tablaLiga[visitanteEq].E++;
+        }
+        
+        tablaLiga[localEq].D = tablaLiga[localEq].GF - tablaLiga[localEq].GC;
+        tablaLiga[visitanteEq].D = tablaLiga[visitanteEq].GF - tablaLiga[visitanteEq].GC;
+        
+        fixtureLiga[numFecha].forEach(partido => {
+            if (partido.local === localEq && partido.visitante === visitanteEq) {
+                partido.jugado = true;
+            }
+        });
+        
+        localStorage.setItem('tablaLiga', JSON.stringify(tablaLiga));
+        localStorage.setItem('partidosJugados', JSON.stringify(partidosJugados));
+        localStorage.setItem('fixtureLiga', JSON.stringify(fixtureLiga));
+        
+        generarLiga();
+    }
+
+    // --- COPA PAKISTANI ---
+    let pakistaniFases = { 
+        octavos: [], cuartos: [], semis: [], final: [], 
+        campeon: null 
+    };
+
+    function iniciarPakistani(){
+        if (!esAdmin && pakistaniFases.campeon) {
+            mostrarPakistani('final');
+            return;
+        }
+        
+        if (pakistaniFases.campeon) {
+            if (confirm('Ya hay un campeón. ¿Reiniciar la copa?')) {
+                reiniciarCopaPakistani();
+            }
+        }
+        
+        let ranking = Object.entries(tablaLiga).sort((a,b) => b[1].P - a[1].P);
+        let primeros16 = ranking.slice(0,16).map(e => e[0]);
+        primeros16.sort(() => Math.random() - 0.5);
+        
+        pakistaniFases.octavos = [];
+        for(let i = 0; i < 16; i += 2) {
+            pakistaniFases.octavos.push({
+                local: primeros16[i],
+                visitante: primeros16[i+1],
+                jugado: false,
+                resultado: null,
+                ganador: null
+            });
+        }
+        
+        guardarDatosPakistani();
+        mostrarPakistani('octavos');
+    }
+
+    function reiniciarCopaPakistani() {
+        pakistaniFases = { octavos: [], cuartos: [], semis: [], final: [], campeon: null };
+        localStorage.removeItem('pakistaniFases');
+    }
+
+    function guardarDatosPakistani() {
+        localStorage.setItem('pakistaniFases', JSON.stringify(pakistaniFases));
+    }
+
+    function cargarDatosPakistani() {
+        const datos = localStorage.getItem('pakistaniFases');
+        if (datos) {
+            pakistaniFases = JSON.parse(datos);
+        }
+    }
+
+    function mostrarPakistani(fase){
+        pakistaniDiv.innerHTML = "";
+        const btnVolver = crearBotonVolver();
+        pakistaniDiv.appendChild(btnVolver);
+        
+        const titulo = document.createElement('h2');
+        titulo.innerHTML = `🏅 Copa Pakistani - ${fase.charAt(0).toUpperCase() + fase.slice(1)}`;
+        pakistaniDiv.appendChild(titulo);
+        
+        let partidos = pakistaniFases[fase];
+        
+        if (partidos.length === 0) {
+            pakistaniDiv.appendChild(document.createElement('p')).textContent = 'No hay partidos para esta fase.';
+            return;
+        }
+        
+        partidos.forEach((partido, index) => {
+            const div = document.createElement('div');
+            div.classList.add('partido');
+            if (partido.jugado) div.classList.add('jugado');
+            
+            let resultadoHTML = '';
+            if (partido.jugado) {
+                const escudoGanador = getEscudo(partido.ganador);
+                resultadoHTML = `<span class="resultado" style="color: ${partido.ganador === partido.local ? 'green' : 'red'};">
+                    ${partido.resultado.local}-${partido.resultado.visitante} 
+                    (🏆 ${escudoGanador}${partido.ganador})
+                </span>`;
+            }
+            
+            const escudoLocal = getEscudo(partido.local);
+            const escudoVisitante = getEscudo(partido.visitante);
+            
+            const botonTexto = esAdmin ? 
+                (partido.jugado ? 'Jugado' : 'Generar') : 
+                (partido.jugado ? 'Jugado' : 'Simular');
+            
+            const botonClase = esAdmin ? 'generar' : (partido.jugado ? 'generar' : 'generar simular');
+            
+            div.innerHTML = `
+                <span class="team-cell">${escudoLocal}${partido.local} vs ${partido.visitante}${escudoVisitante}</span>
+                <div>
+                    <button class="${botonClase}" ${partido.jugado ? 'disabled' : ''} 
+                        onclick="window.simularResultadoPakistani('${fase}', ${index}, ${esAdmin})">
+                        ${botonTexto}
+                    </button>
+                    ${resultadoHTML}
+                </div>
+            `;
+            pakistaniDiv.appendChild(div);
+        });
+        
+        const todosJugados = partidos.every(p => p.jugado);
+        if (todosJugados && fase !== 'final' && esAdmin) {
+            const siguienteFase = getSiguienteFase(fase);
+            const btnSiguiente = document.createElement('button');
+            btnSiguiente.textContent = `Avanzar a ${siguienteFase}`;
+            btnSiguiente.style.cssText = 'padding: 10px; margin: 10px 0; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;';
+            btnSiguiente.onclick = () => avanzarFasePakistani(fase);
+            pakistaniDiv.appendChild(btnSiguiente);
+        }
+        
+        if (pakistaniFases.campeon) {
+            const escudoCampeon = getEscudo(pakistaniFases.campeon);
+            const campeonDiv = document.createElement('div');
+            campeonDiv.style.cssText = 'background: gold; padding: 15px; border-radius: 10px; margin: 15px 0; text-align: center; font-weight: bold; font-size: 18px;';
+            campeonDiv.innerHTML = `🏆 CAMPEÓN: ${escudoCampeon}${pakistaniFases.campeon} 🏆`;
+            pakistaniDiv.appendChild(campeonDiv);
+        }
+    }
+
+    window.simularResultadoPakistani = function(fase, index, esAdminParam){
+        const resultado = generarResultadoSimulado();
+        
+        if (!esAdminParam) {
+            // MODO FEMBOY: Solo muestra simulación
+            const partidos = pakistaniDiv.querySelectorAll('.partido');
+            const partidoDiv = partidos[index];
+            const resultadoSpan = partidoDiv.querySelector('.resultado') || document.createElement('span');
+            resultadoSpan.className = 'resultado resultado-simulado';
+            resultadoSpan.innerHTML = `Simulado: ${resultado.local}-${resultado.visitante}`;
+            resultadoSpan.style.color = '#17a2b8';
+            resultadoSpan.style.fontStyle = 'italic';
+            
+            if (!partidoDiv.querySelector('.resultado')) {
+                partidoDiv.querySelector('div').appendChild(resultadoSpan);
+            }
+            return;
+        }
+        
+        // MODO PATO: Guarda resultado real
+        window.resultadoPakistani(fase, index);
+    }
+
+    function getSiguienteFase(faseActual) {
+        const fases = ['octavos', 'cuartos', 'semis', 'final'];
+        const index = fases.indexOf(faseActual);
+        return fases[index + 1];
+    }
+
+    function avanzarFasePakistani(faseActual) {
+        const partidos = pakistaniFases[faseActual];
+        const ganadores = partidos.map(p => p.ganador);
+        
+        const siguienteFase = getSiguienteFase(faseActual);
+        
+        if (siguienteFase === 'final') {
+            pakistaniFases.final = [{
+                local: ganadores[0],
+                visitante: ganadores[1],
+                jugado: false,
+                resultado: null,
+                ganador: null
+            }];
+        } else {
+            pakistaniFases[siguienteFase] = [];
+            for (let i = 0; i < ganadores.length; i += 2) {
+                pakistaniFases[siguienteFase].push({
+                    local: ganadores[i],
+                    visitante: ganadores[i+1],
+                    jugado: false,
+                    resultado: null,
+                    ganador: null
+                });
+            }
+        }
+        
+        guardarDatosPakistani();
+        mostrarPakistani(siguienteFase);
+    }
+
+    window.resultadoPakistani = function(fase, index){
+        let partido = pakistaniFases[fase][index];
+        let local = 0, visitante = 0;
+        for(let i = 0; i < 5; i++){
+            const tiro = Math.floor(Math.random() * 3);
+            if(tiro === 1) local++; 
+            else if(tiro === 2) visitante++;
+        }
+        
+        let ganador;
+        if (local > visitante) {
+            ganador = partido.local;
+        } else if (visitante > local) {
+            ganador = partido.visitante;
+        } else {
+            ganador = Math.random() > 0.5 ? partido.local : partido.visitante;
+            local = ganador === partido.local ? local + 1 : local;
+            visitante = ganador === partido.visitante ? visitante + 1 : visitante;
+        }
+        
+        partido.jugado = true;
+        partido.resultado = { local, visitante };
+        partido.ganador = ganador;
+        
+        if (fase === 'final') {
+            pakistaniFases.campeon = ganador;
+        }
+        
+        guardarDatosPakistani();
+        mostrarPakistani(fase);
+    }
+
+    // --- COPA ETS ---
+    let etsFases = { 
+        cuartos: [], semis: [], final: [], 
+        campeon: null 
+    };
+
+    function iniciarETS(){
+        if (!esAdmin && etsFases.campeon) {
+            mostrarETS('final', 'ida');
+            return;
+        }
+        
+        if (etsFases.campeon) {
+            if (confirm('Ya hay un campeón. ¿Reiniciar la copa?')) {
+                reiniciarCopaETS();
+            }
+        }
+        
+        let ranking = Object.entries(tablaLiga).sort((a,b) => b[1].P - a[1].P);
+        let primeros8 = ranking.slice(0,8).map(e => e[0]);
+        primeros8.sort(() => Math.random() - 0.5);
+        
+        etsFases.cuartos = [];
+        for(let i = 0; i < 8; i += 2) {
+            etsFases.cuartos.push({
+                local: primeros8[i],
+                visitante: primeros8[i+1],
+                ida: { jugado: false, resultado: null },
+                vuelta: { jugado: false, resultado: null },
+                global: { local: 0, visitante: 0 },
+                ganador: null
+            });
+        }
+        
+        guardarDatosETS();
+        mostrarETS('cuartos', 'ida');
+    }
+
+    function reiniciarCopaETS() {
+        etsFases = { cuartos: [], semis: [], final: [], campeon: null };
+        localStorage.removeItem('etsFases');
+    }
+
+    function guardarDatosETS() {
+        localStorage.setItem('etsFases', JSON.stringify(etsFases));
+    }
+
+    function cargarDatosETS() {
+        const datos = localStorage.getItem('etsFases');
+        if (datos) {
+            etsFases = JSON.parse(datos);
+        }
+    }
+
+    function mostrarETS(fase, tipoPartido){
+        etsDiv.innerHTML = "";
+        const btnVolver = crearBotonVolver();
+        etsDiv.appendChild(btnVolver);
+        
+        const titulo = document.createElement('h2');
+        titulo.innerHTML = `🌟 Copa ETS - ${fase.charAt(0).toUpperCase() + fase.slice(1)} (${tipoPartido.toUpperCase()})`;
+        etsDiv.appendChild(titulo);
+        
+        let partidos = etsFases[fase];
+        
+        partidos.forEach((partido, index) => {
+            const div = document.createElement('div');
+            div.classList.add('partido');
+            
+            let infoResultado = '';
+            if (partido.ida.jugado) {
+                infoResultado += `Ida: ${partido.ida.resultado.local}-${partido.ida.resultado.visitante} `;
+            }
+            if (partido.vuelta.jugado) {
+                infoResultado += `Vuelta: ${partido.vuelta.resultado.local}-${partido.vuelta.resultado.visitante} `;
+            }
+            if (partido.ganador) {
+                const escudoGanador = getEscudo(partido.ganador);
+                infoResultado += `<br><strong>Global: ${partido.global.local}-${partido.global.visitante} (🏆 ${escudoGanador}${partido.ganador})</strong>`;
+            }
+            
+            const partidoJugado = tipoPartido === 'ida' ? partido.ida.jugado : partido.vuelta.jugado;
+            
+            const escudoLocal = getEscudo(partido.local);
+            const escudoVisitante = getEscudo(partido.visitante);
+            
+            const botonTexto = esAdmin ? 
+                (partidoJugado ? 'Jugado' : `Jugar ${tipoPartido}`) : 
+                (partidoJugado ? 'Jugado' : `Simular ${tipoPartido}`);
+            
+            const botonClase = esAdmin ? 'generar' : (partidoJugado ? 'generar' : 'generar simular');
+            
+            div.innerHTML = `
+                <div>
+                    <strong>${escudoLocal}${partido.local} vs ${partido.visitante}${escudoVisitante}</strong>
+                    <div style="font-size: 12px; color: #666;">${infoResultado}</div>
+                </div>
+                <div>
+                    <button class="${botonClase}" ${partidoJugado ? 'disabled' : ''} 
+                        onclick="window.simularResultadoETS('${fase}', ${index}, '${tipoPartido}', ${esAdmin})">
+                        ${botonTexto}
+                    </button>
+                </div>
+            `;
+            
+            if (partidoJugado) div.classList.add('jugado');
+            etsDiv.appendChild(div);
+        });
+        
+        if (fase !== 'final' && esAdmin) {
+            const todosIdaJugados = partidos.every(p => p.ida.jugado);
+            const todosVueltaJugados = partidos.every(p => p.vuelta.jugado);
+            
+            if (tipoPartido === 'ida' && todosIdaJugados) {
+                const btnVuelta = document.createElement('button');
+                btnVuelta.textContent = 'Ir a Partidos de Vuelta';
+                btnVuelta.style.cssText = 'padding: 10px; margin: 10px 0; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;';
+                btnVuelta.onclick = () => mostrarETS(fase, 'vuelta');
+                etsDiv.appendChild(btnVuelta);
+            }
+            
+            if (tipoPartido === 'vuelta' && todosVueltaJugados) {
+                const ganadores = partidos.map(p => p.ganador);
+                const siguienteFase = getSiguienteFaseETS(fase);
+                
+                if (siguienteFase) {
+                    etsFases[siguienteFase] = [];
+                    for (let i = 0; i < ganadores.length; i += 2) {
+                        etsFases[siguienteFase].push({
+                            local: ganadores[i],
+                            visitante: ganadores[i+1],
+                            ida: { jugado: false, resultado: null },
+                            vuelta: { jugado: false, resultado: null },
+                            global: { local: 0, visitante: 0 },
+                            ganador: null
+                        });
+                    }
+                    guardarDatosETS();
+                    
+                    const btnSiguiente = document.createElement('button');
+                    btnSiguiente.textContent = `Avanzar a ${siguienteFase}`;
+                    btnSiguiente.style.cssText = 'padding: 10px; margin: 10px 0; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;';
+                    btnSiguiente.onclick = () => mostrarETS(siguienteFase, 'ida');
+                    etsDiv.appendChild(btnSiguiente);
+                }
+            }
+        }
+        
+        if (etsFases.campeon) {
+            const escudoCampeon = getEscudo(etsFases.campeon);
+            const campeonDiv = document.createElement('div');
+            campeonDiv.style.cssText = 'background: purple; color: white; padding: 15px; border-radius: 10px; margin: 15px 0; text-align: center; font-weight: bold; font-size: 18px;';
+            campeonDiv.innerHTML = `🏆 CAMPEÓN ETS: ${escudoCampeon}${etsFases.campeon} 🏆`;
+            etsDiv.appendChild(campeonDiv);
+        }
+    }
+
+    window.simularResultadoETS = function(fase, index, tipoPartido, esAdminParam){
+        const resultado = generarResultadoSimulado();
+        
+        if (!esAdminParam) {
+            // MODO FEMBOY: Solo muestra simulación
+            const partidos = etsDiv.querySelectorAll('.partido');
+            const partidoDiv = partidos[index];
+            const infoDiv = partidoDiv.querySelector('div div');
+            const resultadoTexto = tipoPartido === 'ida' ? 
+                `Ida: ${resultado.local}-${resultado.visitante}` : 
+                `Vuelta: ${resultado.local}-${resultado.visitante}`;
+            
+            infoDiv.innerHTML = `<span style="color: #17a2b8; font-style: italic;">Simulado - ${resultadoTexto}</span>`;
+            return;
+        }
+        
+        // MODO PATO: Guarda resultado real
+        window.resultadoETS(fase, index, tipoPartido);
+    }
+
+    function getSiguienteFaseETS(faseActual) {
+        const fases = ['cuartos', 'semis', 'final'];
+        const index = fases.indexOf(faseActual);
+        return index < fases.length - 1 ? fases[index + 1] : null;
+    }
+
+    window.resultadoETS = function(fase, index, tipoPartido){
+        let partido = etsFases[fase][index];
+        let local = 0, visitante = 0;
+        for(let i = 0; i < 5; i++){
+            const tiro = Math.floor(Math.random() * 3);
+            if(tiro === 1) local++; 
+            else if(tiro === 2) visitante++;
+        }
+        
+        if (tipoPartido === 'ida') {
+            partido.ida.jugado = true;
+            partido.ida.resultado = { local, visitante };
+            partido.global.local += local;
+            partido.global.visitante += visitante;
+        } else {
+            partido.vuelta.jugado = true;
+            partido.vuelta.resultado = { local, visitante };
+            partido.global.local += visitante;
+            partido.global.visitante += local;
+        }
+        
+        if (partido.ida.jugado && partido.vuelta.jugado) {
+            if (partido.global.local > partido.global.visitante) {
+                partido.ganador = partido.local;
+            } else if (partido.global.visitante > partido.global.local) {
+                partido.ganador = partido.visitante;
+            } else {
+                partido.ganador = Math.random() > 0.5 ? partido.local : partido.visitante;
+            }
+            
+            if (fase === 'final' && partido.ganador) {
+                etsFases.campeon = partido.ganador;
+            }
+        }
+        
+        guardarDatosETS();
+        mostrarETS(fase, tipoPartido);
+    }
+
+    // --- SUPERCOPA (CORREGIDO) ---
+    function iniciarSupercopa(){
+        superDiv.innerHTML = "";
+        const btnVolver = crearBotonVolver();
+        superDiv.appendChild(btnVolver);
+        
+        let ranking = Object.entries(tablaLiga).sort((a,b) => b[1].P - a[1].P);
+        let primeroLiga = ranking[0][0];
+        let ganadorPakistani = pakistaniFases.campeon;
+        
+        if (!ganadorPakistani) {
+            const mensajeDiv = document.createElement('div');
+            mensajeDiv.innerHTML = `
+                <h2>🔥 Supercopa</h2>
+                <p>Primero debe haber un campeón de la Copa Pakistani</p>
+                <button onclick="iniciarPakistani()" style="padding: 10px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    Ir a Copa Pakistani
+                </button>
+            `;
+            superDiv.appendChild(mensajeDiv);
+            return;
+        }
+        
+        const escudoLiga = getEscudo(primeroLiga);
+        const escudoPakistani = getEscudo(ganadorPakistani);
+        
+        const botonTexto = esAdmin ? 'Generar Partido' : 'Simular Partido';
+        const botonClase = esAdmin ? 'generar' : 'generar simular';
+        
+        const contenidoDiv = document.createElement('div');
+        contenidoDiv.innerHTML = `
+            <h2>🔥 Supercopa</h2>
+            <p>Campeón de Liga vs Campeón de Copa Pakistani</p>
+            <div class="partido">
+                <span class="team-cell">${escudoLiga}${primeroLiga} 🆚 ${ganadorPakistani}${escudoPakistani}</span>
+                <button class="${botonClase}" onclick="window.simularResultadoSupercopa(${esAdmin})">
+                    ${botonTexto}
+                </button>
+                <span class="result"></span>
+            </div>
+        `;
+        superDiv.appendChild(contenidoDiv);
+    }
+
+    window.simularResultadoSupercopa = function(esAdminParam){
+        const resultado = generarResultadoSimulado();
+        
+        if (!esAdminParam) {
+            // MODO FEMBOY: Solo muestra simulación
+            const span = superDiv.querySelector('.result');
+            span.innerHTML = `<strong style="color: #17a2b8; font-style: italic;">Simulado: ${resultado.local}-${resultado.visitante}</strong>`;
+            return;
+        }
+        
+        // MODO PATO: Guarda resultado real
+        window.resultadoSupercopa();
+    }
+
+    window.resultadoSupercopa = function(){
+        let local = 0, visitante = 0;
+        for(let i = 0; i < 5; i++){
+            const tiro = Math.floor(Math.random() * 3);
+            if(tiro === 1) local++; 
+            else if(tiro === 2) visitante++;
+        }
+        
+        let span = superDiv.querySelector('.result');
+        span.innerHTML = `<strong style="color: green; font-size: 18px;">${local}-${visitante}</strong>`;
+        
+        let ganador = local > visitante ? 'Campeón de Liga' : 
+                     visitante > local ? 'Campeón de Copa Pakistani' : 'Empate';
+        
+        const resultadoDiv = document.createElement('div');
+        resultadoDiv.style.cssText = 'background: #ffcc00; padding: 15px; border-radius: 10px; margin: 15px 0; text-align: center; font-weight: bold;';
+        resultadoDiv.innerHTML = `🏆 GANADOR: ${ganador} 🏆`;
+        superDiv.appendChild(resultadoDiv);
+    }
+
+    // --- BOTÓN NUEVA TEMPORADA ---
+    window.reiniciarTemporada = function() {
+        if (!esAdmin) {
+            alert("❌ Solo el PATO puede reiniciar la temporada");
+            return;
+        }
+        
+        if (confirm('¿Estás seguro de que querés empezar una nueva temporada? Se borrarán TODOS los datos.')) {
+            localStorage.removeItem('tablaLiga');
+            localStorage.removeItem('partidosJugados');
+            localStorage.removeItem('fixtureLiga');
+            localStorage.removeItem('pakistaniFases');
+            localStorage.removeItem('etsFases');
+            localStorage.removeItem('esAdmin');
+            location.reload();
+        }
+    }
+
+    // Cargar datos de las copas
+    cargarDatosPakistani();
+    cargarDatosETS();
+    
+    // Iniciar aplicación
+    generarLiga();
+}
+
+// --- INICIAR TODO ---
+mostrarSeleccionRol();
+</script>
+</body>
+</html>
