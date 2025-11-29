@@ -1,1041 +1,2185 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Copa Pistón</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COPA PISTÓN - EDICIÓN DEFINITIVA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-body { 
-    font-family: 'Roboto', sans-serif; 
-    margin:0; 
-    padding:0; 
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-}
-h1,h2 { text-align:center; margin:5px 0; }
-.container { 
-    max-width:1000px; 
-    margin:20px auto; 
-    background:white; 
-    padding:20px; 
-    border-radius:12px; 
-    box-shadow:0 0 15px rgba(0,0,0,0.2); 
-}
-.menu-inicio { 
-    text-align:center; 
-    padding:50px 20px; 
-    color:white; 
-}
-.menu-inicio button { 
-    padding:15px 30px; 
-    font-size:18px; 
-    border:none; 
-    border-radius:12px; 
-    cursor:pointer; 
-    margin:10px; 
-    font-weight: bold;
-    transition: transform 0.2s;
-}
-.menu-inicio button:hover {
-    transform: translateY(-2px);
-}
-.btn-liga { background: #3399ff; color:white; }
-.btn-pakistani { background: #33cc66; color:white; }
-.btn-ets { background: #9933cc; color:white; }
-.btn-supercopa { background: #ffcc00; color:black; }
-.btn-volver { background: #6c757d; color:white; padding: 10px 20px; font-size: 14px; margin-bottom: 15px; }
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-.fecha { margin:10px 0; border-radius:8px; background:#f7f7f7; padding:10px; }
-.fecha-header { display:flex; justify-content:space-between; cursor:pointer; background:#e0e0e0; padding:5px 10px; border-radius:6px; font-weight:bold; }
-.partido { display:flex; justify-content:space-between; align-items:center; padding:5px 10px; margin:5px 0; background:#fff; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
-button.generar { padding:5px 10px; border:none; border-radius:6px; cursor:pointer; background:#28a745; color:white; }
-button.generar:disabled { background:#ccc; cursor:not-allowed; }
-button.simular { background:#17a2b8 !important; }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-/* --- CORRECCIÓN IMÁGENES EN TODOS LOS TORNEOS --- */
-.team-cell img, .equipo-con-escudo img { 
-    width: 24px !important; 
-    height: 24px !important; 
-    border-radius: 4px; 
-    margin-right: 6px; 
-    vertical-align: middle;
-    object-fit: contain;
-}
-.tabla-liga img {
-    width: 20px !important;
-    height: 20px !important;
-    margin-right: 5px;
-}
-/* GARANTIZAR TAMAÑO EN TODOS LOS TORNEOS */
-#liga img, #pakistani img, #ets img, #supercopa img,
-.liga img, .pakistani img, .ets img, .supercopa img {
-    max-width: 24px !important;
-    max-height: 24px !important;
-    width: auto !important;
-    height: auto !important;
-    border-radius: 4px;
-    margin-right: 6px;
-    vertical-align: middle;
-    object-fit: contain;
-}
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
 
-.torneo { margin-top:20px; padding:15px; border-radius:12px; display:none; position: relative; }
-.liga { background: linear-gradient(to bottom,#66ccff,#3399ff); }
-.pakistani { background: linear-gradient(to bottom,#66ff99,#33cc66); }
-.ets { background: linear-gradient(to bottom,#cc99ff,#9933cc); }
-.supercopa { background: linear-gradient(to bottom,#fff066,#ffcc33); }
-.hidden { display:none; }
-.tabla-liga { width:100%; border-collapse:collapse; margin-top:10px; }
-.tabla-liga th, .tabla-liga td { padding:5px; border:1px solid #ccc; text-align:center; font-size:14px; }
-.tabla-liga tr:nth-child(even) { background:#f9f9f9; }
-.jugado { background:#e8f5e8 !important; }
-.reiniciar-btn { background:#dc3545 !important; color:white !important; margin-top:20px; }
-.equipo-con-escudo { display:flex; align-items:center; gap:8px; justify-content: flex-start; }
-.resultado-simulado { color: #17a2b8 !important; font-style: italic; }
-</style>
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ffd700, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        /* Tarjetas de Torneos */
+        .tournament-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .tournament-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .tournament-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        .tournament-card.liga {
+            border-color: #3399ff;
+            background: linear-gradient(135deg, #66ccff, #3399ff);
+        }
+
+        .tournament-card.pakistani {
+            border-color: #33cc66;
+            background: linear-gradient(135deg, #66ff99, #33cc66);
+        }
+
+        .tournament-card.ets {
+            border-color: #9933cc;
+            background: linear-gradient(135deg, #cc99ff, #9933cc);
+        }
+
+        .tournament-card.supercopa {
+            border-color: #ffcc00;
+            background: linear-gradient(135deg, #fff066, #ffcc33);
+        }
+
+        .tournament-card.hall-fama {
+            border-color: #FFD700;
+            background: linear-gradient(135deg, #FFF8DC, #FFD700);
+        }
+
+        .tournament-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .tournament-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .tournament-card p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* Modales */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .role-btn {
+            width: 100%;
+            padding: 20px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pato-btn {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: black;
+        }
+
+        .femboy-btn {
+            background: linear-gradient(135deg, #FFB6C1, #FF69B4);
+            color: white;
+        }
+
+        .role-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        /* Contenido del Torneo */
+        .tournament-content {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+            transform: translateX(-5px);
+        }
+
+        .reset-all-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-size: 1em;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .reset-all-btn:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
+
+        /* Tablas */
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .standings-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .standings-table td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .standings-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .standings-table tr:hover {
+            background: #e3f2fd;
+        }
+
+        /* Partidos */
+        .match-day {
+            margin: 20px 0;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .match-day-header {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .matches-container {
+            padding: 15px;
+            background: #f8f9fa;
+        }
+
+        .match {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .match:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .match.played {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .teams {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .vs {
+            color: #666;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+
+        .result-inputs {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-input {
+            width: 50px;
+            padding: 5px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-generate {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-generate:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+
+        .btn-simulate {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-simulate:hover {
+            background: #138496;
+            transform: scale(1.05);
+        }
+
+        .btn-advance {
+            background: #6f42c1;
+            color: white;
+            padding: 10px 20px;
+            margin: 10px 0;
+        }
+
+        .btn-advance:hover {
+            background: #5a2d91;
+        }
+
+        .btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            font-weight: bold;
+            font-size: 1.1em;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .simulated {
+            color: #17a2b8;
+            font-style: italic;
+        }
+
+        /* Gráfico de Evolución */
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .chart-title {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8em;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        /* Hall de la Fama */
+        .hall-fama-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .temporada-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .temporada-btn {
+            padding: 8px 16px;
+            border: 2px solid #6c757d;
+            background: white;
+            color: #6c757d;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .temporada-btn.active {
+            background: #6c757d;
+            color: white;
+        }
+
+        .temporada-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .campeones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .campeon-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #28a745;
+        }
+
+        .campeon-card.liga {
+            border-left-color: #3399ff;
+        }
+
+        .campeon-card.pakistani {
+            border-left-color: #33cc66;
+        }
+
+        .campeon-card.ets {
+            border-left-color: #9933cc;
+        }
+
+        .campeon-card.supercopa {
+            border-left-color: #ffcc00;
+        }
+
+        .campeon-titulo {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .campeon-equipo {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .tournament-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .match {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .teams {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .result-inputs {
+                justify-content: center;
+            }
+
+            .chart-legend {
+                font-size: 0.7em;
+            }
+
+            .campeones-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Efectos especiales */
+        @keyframes goalAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); color: #dc3545; }
+            100% { transform: scale(1); }
+        }
+
+        .goal-animation {
+            animation: goalAnimation 0.5s ease-in-out;
+        }
+
+        .champion-badge {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: black;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 20px 0;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(255,215,0,0.3);
+        }
+
+        .admin-badge {
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        .femboy-badge {
+            background: #17a2b8;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        /* Loader */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .status-saving {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status-saved {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
 </head>
 <body>
-<div id="app"></div>
-
-<script>
-// --- SISTEMA DE ROLES PATO vs FEMBOY ---
-function mostrarSeleccionRol() {
-    const html = `
-        <div style="text-align:center; padding:50px; background:linear-gradient(135deg, #667eea, #764ba2); color:white; min-height:100vh;">
-            <h1 style="font-size:2.5em;">🏆 COPA PISTÓN 🏆</h1>
-            <p style="opacity:0.8;">"tuvimos que estudiar programación para hacer esto sino RedBullSida se afanaba todas las copas"</p>
-            
-            <div style="background:white; color:black; padding:30px; border-radius:15px; margin:30px auto; max-width:500px; box-shadow:0 10px 30px rgba(0,0,0,0.3);">
-                <h2>¿Quién sos en la Copa Pistón?</h2>
+    <div class="container">
+        <!-- Pantalla de Selección de Rol -->
+        <div id="roleSelection" class="modal" style="display: block;">
+            <div class="modal-content">
+                <div class="header">
+                    <h1>🏆 COPA PISTÓN 🏆</h1>
+                    <p class="subtitle">"tuvimos que estudiar programación para que RedBull no se robe todas las copas"</p>
+                </div>
                 
-                <button onclick="elegirPato()" style="background:linear-gradient(135deg, #FFD700, #FFA500); color:black; border:none; padding:20px; margin:15px; border-radius:10px; font-size:18px; font-weight:bold; cursor:pointer; width:300px;">
+                <h2 style="margin: 20px 0; color: #333;">BIENVENIDOS A LA COPA PISTÓN</h2>
+                
+                <button class="role-btn pato-btn" onclick="selectRole('pato')">
                     🐐 PATO (GOAT) - Modo Admin
                 </button>
-                <p style="font-size:14px; color:#666;">Acceso total para cambiar resultados</p>
+                <p style="color: #666; margin-bottom: 20px;">Cargás resultados reales que todos ven</p>
                 
-                <br>
-                
-                <button onclick="elegirFemboy()" style="background:linear-gradient(135deg, #FFB6C1, #FF69B4); color:white; border:none; padding:20px; margin:15px; border-radius:10px; font-size:18px; font-weight:bold; cursor:pointer; width:300px;">
-                    🎀 FEMBOY - Modo Lectura
+                <button class="role-btn femboy-btn" onclick="selectRole('femboy')">
+                    🎀 FEMBOY - Modo Simulación
                 </button>
-                <p style="font-size:14px; color:#666;">Solo podés ver y simular (no guarda)</p>
+                <p style="color: #666;">Simulás partidos (solo vos los ves)</p>
             </div>
         </div>
-    `;
-    document.getElementById('app').innerHTML = html;
-}
 
-function elegirFemboy() {
-    localStorage.setItem('esAdmin', 'false');
-    iniciarAplicacion();
-}
-
-function elegirPato() {
-    const password = prompt("🐐 ACCESO PATO (GOAT)\nIngresá la clave secreta del admin:");
-    // 🚨 ¡CAMBIÁ ESTA CONTRASEÑA POR UNA TUYA! 🚨
-    if (password === "PampaATH") {
-        localStorage.setItem('esAdmin', 'true');
-        alert("✅ ¡Acceso concedido, PATO! Modo admin activado.");
-        iniciarAplicacion();
-    } else {
-        const html = `
-            <div style="text-align:center; padding:50px; background:linear-gradient(135deg, #ff4444, #cc0000); color:white; min-height:100vh;">
-                <h1 style="font-size:3em; color:white;">🚨 ¡IIIIH TÍPICO DE FEMBOY! 🚨</h1>
-                <p style="font-size:1.5em;">Volvé para atrás piba</p>
-                <button onclick="mostrarSeleccionRol()" style="background:white; color:red; border:none; padding:15px 30px; border-radius:10px; font-size:18px; font-weight:bold; cursor:pointer; margin-top:30px;">
-                    🔙 VOLVER ATRÁS
-                </button>
+        <!-- Pantalla Principal -->
+        <div id="mainScreen" style="display: none;">
+            <div class="header">
+                <h1>COPA PISTÓN</h1>
+                <p class="subtitle">"tuvimos que estudiar programación para que RedBull no se robe todas las copas"</p>
+                <div id="roleIndicator" style="margin-top: 10px;"></div>
+                <div style="margin-top: 15px;">
+                    <button class="back-btn" onclick="hideTournament()">🔙 Volver al Menú</button>
+                    <button class="reset-all-btn" onclick="resetAllTournaments()" id="resetAllBtn" style="display: none;">🔄 Reiniciar Todos los Torneos</button>
+                </div>
+                <div id="statusMessage" class="status-message" style="display: none;"></div>
             </div>
-        `;
-        document.getElementById('app').innerHTML = html;
-    }
-}
 
-// --- APLICACIÓN PRINCIPAL ---
-function iniciarAplicacion() {
-    const esAdmin = localStorage.getItem('esAdmin') === 'true';
-    
-    const appHTML = `
-        <div class="menu-inicio" id="menuInicio">
-            <h1 id="tituloMenu">BIENVENIDOS A LA COPA PISTÓN</h1>
-            <p style="font-size:14px; opacity:0.9;">"tuvimos que estudiar programación para hacer esto sino RedBullSida se afanaba todas las copas"</p>
-            <button id="btnLiga" class="btn-liga">Liga</button>
-            <button id="btnPakistani" class="btn-pakistani">Copa Pakistani</button>
-            <button id="btnETS" class="btn-ets">Copa ETS</button>
-            <button id="btnSupercopa" class="btn-supercopa">Supercopa</button>
-            <br>
-            <button class="reiniciar-btn" onclick="reiniciarTemporada()">🔄 NUEVA TEMPORADA</button>
-            ${!esAdmin ? 
-                '<p style="color:#17a2b8; margin-top:10px;">🔮 Modo Simulación - Los resultados no se guardan</p>' : 
-                '<p style="color:green; margin-top:10px;">⚡ Modo Admin Activado</p>'
-            }
+            <!-- Grid de Torneos -->
+            <div class="tournament-grid">
+                <div class="tournament-card liga" onclick="showTournament('liga')">
+                    <div class="tournament-icon">⚽</div>
+                    <h3>LIGA</h3>
+                    <p>Torneo de todos contra todos</p>
+                </div>
+                
+                <div class="tournament-card pakistani" onclick="showTournament('pakistani')">
+                    <div class="tournament-icon">🏅</div>
+                    <h3>COPA PAKISTANI</h3>
+                    <p>Eliminación directa</p>
+                </div>
+                
+                <div class="tournament-card ets" onclick="showTournament('ets')">
+                    <div class="tournament-icon">🌟</div>
+                    <h3>COPA ETS</h3>
+                    <p>Ida y vuelta</p>
+                </div>
+                
+                <div class="tournament-card supercopa" onclick="showTournament('supercopa')">
+                    <div class="tournament-icon">🔥</div>
+                    <h3>SUPERCOPA</h3>
+                    <p>Campeón vs Campeón</p>
+                </div>
+
+                <div class="tournament-card hall-fama" onclick="showTournament('hall-fama')">
+                    <div class="tournament-icon">🏛️</div>
+                    <h3>HALL DE LA FAMA</h3>
+                    <p>Campeones históricos</p>
+                </div>
+            </div>
+
+            <!-- Contenido de Torneos -->
+            <div id="tournamentContent" class="tournament-content"></div>
         </div>
+    </div>
 
-        <div class="container" id="torneosContainer">
-            <div class="torneo liga" id="liga"></div>
-            <div class="torneo pakistani" id="pakistani"></div>
-            <div class="torneo ets" id="ets"></div>
-            <div class="torneo supercopa" id="supercopa"></div>
-            <h2>Subir escudos de equipos ${!esAdmin ? '(Solo Admin)' : ''}</h2>
-            <div id="escudos"></div>
-        </div>
-    `;
-    
-    document.getElementById('app').innerHTML = appHTML;
-    inicializarAplicacion(esAdmin);
-}
-
-// --- FUNCIÓN PARA GENERAR RESULTADO (SIMULADO O REAL) ---
-function generarResultadoSimulado() {
-    let local = 0, visitante = 0;
-    for(let i = 0; i < 5; i++) {
-        const tiro = Math.floor(Math.random() * 3);
-        if(tiro === 1) local++;
-        else if(tiro === 2) visitante++;
-    }
-    return { local, visitante };
-}
-
-// --- INICIALIZAR APLICACIÓN ---
-function inicializarAplicacion(esAdmin) {
-    // --- EQUIPOS ---
-    const equipos = ["ATHLETICO","AVENA","SOMBRERO DE PAJA","COSQUIN","MDV","RBS","RD","COCODRILOS","USOCY","MANTECA","RHINO","EMI","RAJASPANDAV","PORONGASURIO","PUNGASAURIO","ILOVECP","JORGE","JOSHUA"];
-
-    // --- INICIALIZAR DATOS ---
-    let tablaLiga = JSON.parse(localStorage.getItem('tablaLiga')) || {};
-    let partidosJugados = JSON.parse(localStorage.getItem('partidosJugados')) || {};
-    let fixtureLiga = JSON.parse(localStorage.getItem('fixtureLiga')) || null;
-
-    // Inicializar tabla si no existe
-    if (Object.keys(tablaLiga).length === 0) {
-        equipos.forEach(e => {
-            tablaLiga[e] = {P:0, G:0, E:0, PD:0, GF:0, GC:0, D:0};
-        });
-    }
-
-    // --- SECCIONES ---
-    const ligaDiv = document.getElementById('liga');
-    const pakistaniDiv = document.getElementById('pakistani');
-    const etsDiv = document.getElementById('ets');
-    const superDiv = document.getElementById('supercopa');
-    const torneos = [ligaDiv,pakistaniDiv,etsDiv,superDiv];
-
-    document.getElementById('btnLiga').addEventListener('click',()=>mostrarTorneo('liga'));
-    document.getElementById('btnPakistani').addEventListener('click',()=>mostrarTorneo('pakistani'));
-    document.getElementById('btnETS').addEventListener('click',()=>mostrarTorneo('ets'));
-    document.getElementById('btnSupercopa').addEventListener('click',()=>mostrarTorneo('supercopa'));
-
-    function mostrarTorneo(nombre){
-        torneos.forEach(t=>t.style.display='none');
-        document.getElementById('menuInicio').style.display = 'none';
-        if(nombre==='liga') {
-            ligaDiv.style.display='block';
-            generarLiga();
-        }
-        if(nombre==='pakistani') {
-            pakistaniDiv.style.display='block';
-            cargarDatosPakistani();
-            if (pakistaniFases.octavos.length > 0) {
-                const faseActual = pakistaniFases.campeon ? 'final' : 
-                                 pakistaniFases.final.length > 0 ? 'final' :
-                                 pakistaniFases.semis.length > 0 ? 'semis' :
-                                 pakistaniFases.cuartos.length > 0 ? 'cuartos' : 'octavos';
-                mostrarPakistani(faseActual);
-            } else {
-                iniciarPakistani();
-            }
-        }
-        if(nombre==='ets') {
-            etsDiv.style.display='block';
-            cargarDatosETS();
-            if (etsFases.cuartos.length > 0) {
-                const faseActual = etsFases.campeon ? 'final' : 
-                                 etsFases.final.length > 0 ? 'final' :
-                                 etsFases.semis.length > 0 ? 'semis' : 'cuartos';
-                const tipoPartido = etsFases[faseActual].every(p => p.ida.jugado) ? 'vuelta' : 'ida';
-                mostrarETS(faseActual, tipoPartido);
-            } else {
-                iniciarETS();
-            }
-        }
-        if(nombre==='supercopa') {
-            superDiv.style.display='block';
-            iniciarSupercopa();
-        }
-    }
-
-    // --- CARGA ESCUDOS (SOLO ADMIN) ---
-    const escudosDiv = document.getElementById('escudos');
-    if (esAdmin) {
-        equipos.forEach(e=>{
-            const div = document.createElement('div');
-            div.innerHTML = `${e}: <input type='file' accept='image/*' onchange="loadShield(event,'${e}')">`;
-            escudosDiv.appendChild(div);
-        });
-    } else {
-        escudosDiv.innerHTML = '<p style="color: #666;">🔒 Solo el PATO puede subir escudos</p>';
-    }
-    
-    window.loadShield = function(e,team){
-        if (!esAdmin) {
-            alert("❌ Solo el PATO puede subir escudos");
-            return;
-        }
-        const file = e.target.files[0];
-        if(file){
-            const reader = new FileReader();
-            reader.onload=function(ev){ 
-                localStorage.setItem('escudo_'+team,ev.target.result);
-                if(ligaDiv.style.display === 'block') generarLiga();
-                if(pakistaniDiv.style.display === 'block') mostrarPakistani('octavos');
-                if(etsDiv.style.display === 'block') mostrarETS('cuartos', 'ida');
-                if(superDiv.style.display === 'block') iniciarSupercopa();
-            }
-            reader.readAsDataURL(file);
-        }
-    }
-
-    function getEscudo(equipo) {
-        const escudo = localStorage.getItem('escudo_'+equipo);
-        if (escudo) {
-            return `<img src="${escudo}" alt="${equipo}" title="${equipo}">`;
-        }
-        return '';
-    }
-
-    // --- BOTÓN VOLVER ---
-    function crearBotonVolver() {
-        const btnVolver = document.createElement('button');
-        btnVolver.className = 'btn-volver';
-        btnVolver.innerHTML = '🔙 Volver al Menú';
-        btnVolver.onclick = () => {
-            torneos.forEach(t=>t.style.display='none');
-            document.getElementById('menuInicio').style.display = 'block';
+    <script>
+        // Configuración
+        const JSONBIN_ID = '67bd2f56e41b4d34e40f1a5e';
+        const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`;
+        const JSONBIN_HEADERS = {
+            'X-Master-Key': '$2a$10$Qd2Z6ZQ8Qd2Z6ZQ8Qd2Z6ZQ8Qd2Z6ZQ8Qd2Z6ZQ8Qd2Z6ZQ8Qd2Z6ZQ8'
         };
-        return btnVolver;
-    }
 
-    // --- ALGORITMO FIXTURE LIGA (Round Robin) ---
-    function generarFixture() {
-        const teams = [...equipos];
-        if (teams.length % 2 !== 0) teams.push('DESCANSO');
-        
-        const fixture = [];
-        const numRounds = teams.length - 1;
-        const half = teams.length / 2;
-        
-        for (let round = 0; round < numRounds; round++) {
-            const fecha = [];
-            for (let i = 0; i < half; i++) {
-                const local = teams[i];
-                const visitante = teams[teams.length - 1 - i];
-                if (local !== 'DESCANSO' && visitante !== 'DESCANSO') {
-                    if (round % 2 === 0) {
-                        fecha.push({local, visitante, jugado: false});
+        // Paleta de colores EXACTA como la pediste
+        const COLORES_EQUIPOS = {
+            "ATHLETICO": "#800000",      // bordo/granate
+            "JORGE": "#FF69B4",          // rosa
+            "ILOVECP": "#FF8C00",        // naranja
+            "JOSHUA": "#FFD700",         // amarillo
+            "PORONGASURIO": "#40E0D0",   // turquesa
+            "RHINO": "#DC143C",          // rojo
+            "SOMBRERO DE PAJA": "#000000", // negro
+            "EMI": "#B22222",            // rojo fuerte
+            "MDV": "#8A2BE2",            // violeta
+            "MANTECA": "#87CEEB",        // celeste claro
+            "RD": "#00BFFF",             // celeste
+            "USOCY": "#32CD32",          // verde
+            "COCODRILOS": "#DA70D6",     // violeta-rosa
+            "AVENA": "#D2B48C",          // marrón claro
+            "RBS": "#FFFFFF",            // blanco (con borde)
+            "COSQUIN": "#696969",        // gris oscuro
+            "RAJASPANDAV": "#FF4500",    // naranja oscuro
+            "PUNGASAURIO": "#D3D3D3"     // gris clarito
+        };
+
+        // Abreviaturas de 3 letras para el gráfico
+        const ABREVIATURAS_EQUIPOS = {
+            "ATHLETICO": "ATH",
+            "AVENA": "AVE",
+            "SOMBRERO DE PAJA": "SOM",
+            "COSQUIN": "COS",
+            "MDV": "MDV",
+            "RBS": "RBS",
+            "RD": "RD",
+            "COCODRILOS": "COC",
+            "USOCY": "USO",
+            "MANTECA": "MAN",
+            "RHINO": "RHI",
+            "EMI": "EMI",
+            "RAJASPANDAV": "RAJ",
+            "PORONGASURIO": "POR",
+            "PUNGASAURIO": "PUN",
+            "ILOVECP": "ILO",
+            "JORGE": "JOR",
+            "JOSHUA": "JOS"
+        };
+
+        // Datos globales
+        let appData = {
+            userRole: '',
+            liga: {
+                equipos: ["ATHLETICO","AVENA","SOMBRERO DE PAJA","COSQUIN","MDV","RBS","RD","COCODRILOS",
+                         "USOCY","MANTECA","RHINO","EMI","RAJASPANDAV","PORONGASURIO","PUNGASAURIO",
+                         "ILOVECP","JORGE","JOSHUA"],
+                tabla: {},
+                partidosJugados: {},
+                fixture: [],
+                campeon: null,
+                historialPosiciones: []
+            },
+            pakistani: {
+                fases: { octavos: [], cuartos: [], semis: [], final: [] },
+                campeon: null
+            },
+            ets: {
+                fases: { cuartos: [], semis: [], final: [] },
+                campeon: null
+            },
+            supercopa: {
+                partido: null,
+                campeon: null
+            },
+            hallFama: {
+                temporadas: {
+                    1: { liga: "ATHLETICO", pakistani: "MDV", supercopa: "ATHLETICO" },
+                    2: { liga: "ATHLETICO", pakistani: "AVENA", supercopa: "ATHLETICO" },
+                    3: { liga: "USOCY", pakistani: "RBS", supercopa: "USOCY" },
+                    4: { liga: "USOCY", pakistani: "ILOVECP", supercopa: "ILOVECP" },
+                    5: { liga: "USOCY", pakistani: "COSQUIN", ets: "ATHLETICO", supercopa: "COSQUIN" },
+                    6: { liga: null, pakistani: null, ets: null, supercopa: null }
+                }
+            },
+            simulaciones: {
+                liga: {},
+                pakistani: {},
+                ets: {},
+                supercopa: {}
+            }
+        };
+
+        // FECHAS 1 Y 2 FIJAS (EXACTAMENTE como las mandaste)
+        const FECHAS_FIJAS = {
+            0: [ // Fecha 1
+                { local: "ATHLETICO", visitante: "JOSHUA" },
+                { local: "AVENA", visitante: "JORGE" },
+                { local: "SOMBRERO DE PAJA", visitante: "ILOVECP" },
+                { local: "COSQUIN", visitante: "PUNGASAURIO" },
+                { local: "MDV", visitante: "PORONGASURIO" },
+                { local: "RBS", visitante: "RAJASPANDAV" },
+                { local: "RD", visitante: "EMI" },
+                { local: "COCODRILOS", visitante: "RHINO" },
+                { local: "USOCY", visitante: "MANTECA" }
+            ],
+            1: [ // Fecha 2
+                { local: "JORGE", visitante: "ATHLETICO" },
+                { local: "ILOVECP", visitante: "JOSHUA" },
+                { local: "PUNGASAURIO", visitante: "AVENA" },
+                { local: "PORONGASURIO", visitante: "SOMBRERO DE PAJA" },
+                { local: "RAJASPANDAV", visitante: "COSQUIN" },
+                { local: "EMI", visitante: "MDV" },
+                { local: "RHINO", visitante: "RBS" },
+                { local: "MANTECA", visitante: "RD" },
+                { local: "USOCY", visitante: "COCODRILOS" }
+            ]
+        };
+
+        // Variables globales para ETS
+        let etsFaseActual = 'cuartos';
+        let etsTipoPartido = 'ida';
+        let temporadaActualHallFama = 6;
+
+        // Sonido de gol
+        function playGoalSound() {
+            const audio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==");
+            audio.volume = 0.3;
+            audio.play().catch(() => {});
+        }
+
+        // Sistema de Roles
+        function selectRole(role) {
+            if (role === 'pato') {
+                const password = prompt("🐐 PATO - Ingresá la clave del admin:");
+                if (password === "PampaATH") {
+                    appData.userRole = 'pato';
+                    document.getElementById('roleSelection').style.display = 'none';
+                    document.getElementById('mainScreen').style.display = 'block';
+                    document.getElementById('resetAllBtn').style.display = 'inline-block';
+                    showRoleIndicator();
+                    loadData();
+                } else {
+                    alert("❌ Clave incorrecta");
+                }
+            } else {
+                appData.userRole = 'femboy';
+                document.getElementById('roleSelection').style.display = 'none';
+                document.getElementById('mainScreen').style.display = 'block';
+                document.getElementById('resetAllBtn').style.display = 'none';
+                showRoleIndicator();
+                loadData();
+            }
+        }
+
+        function showRoleIndicator() {
+            const indicator = document.getElementById('roleIndicator');
+            if (appData.userRole === 'pato') {
+                indicator.innerHTML = '<span class="admin-badge">🐐 MODO ADMIN - Todos ven tus cambios</span>';
+            } else {
+                indicator.innerHTML = '<span class="femboy-badge">🎀 MODO SIMULACIÓN - Solo vos ves tus cambios</span>';
+            }
+        }
+
+        // Sistema de Datos - JSONBIN
+        async function loadData() {
+            showStatus('Cargando datos...', 'saving');
+            try {
+                const response = await fetch(JSONBIN_URL, { headers: JSONBIN_HEADERS });
+                const data = await response.json();
+                const savedData = data.record;
+                
+                if (savedData) {
+                    const simulacionesTemp = { ...appData.simulaciones };
+                    Object.assign(appData, savedData);
+                    appData.simulaciones = simulacionesTemp;
+                    showStatus('Datos cargados ✅', 'saved');
+                } else {
+                    initializeData();
+                    showStatus('Datos inicializados ✅', 'saved');
+                }
+            } catch (error) {
+                console.log('Inicializando datos nuevos');
+                initializeData();
+                showStatus('Datos inicializados ✅', 'saved');
+            }
+        }
+
+        async function saveData() {
+            if (appData.userRole === 'pato') {
+                showStatus('Guardando...', 'saving');
+                try {
+                    const dataToSave = { ...appData };
+                    delete dataToSave.simulaciones;
+                    
+                    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...JSONBIN_HEADERS
+                        },
+                        body: JSON.stringify(dataToSave)
+                    });
+                    showStatus('Datos guardados ✅', 'saved');
+                } catch (error) {
+                    console.log('Error guardando en JSONBIN');
+                    showStatus('Error guardando ❌', 'error');
+                }
+            }
+        }
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `status-message status-${type}`;
+            statusEl.style.display = 'block';
+            
+            if (type === 'saved') {
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function initializeData() {
+            // Inicializar Liga
+            appData.liga.tabla = {};
+            appData.liga.equipos.forEach(equipo => {
+                appData.liga.tabla[equipo] = { PJ: 0, G: 0, E: 0, P: 0, GF: 0, GC: 0, DG: 0, Pts: 0 };
+            });
+
+            // Generar fixture con fechas fijas + resto automático SIN REPETICIONES
+            if (appData.liga.fixture.length === 0) {
+                appData.liga.fixture = generateFixtureWithoutRepetitions();
+            }
+
+            // Inicializar historial de posiciones
+            if (appData.liga.historialPosiciones.length === 0) {
+                actualizarHistorialPosiciones();
+            }
+
+            // Inicializar copas si no existen
+            if (appData.pakistani.fases.octavos.length === 0) {
+                initializePakistani();
+            }
+
+            if (appData.ets.fases.cuartos.length === 0) {
+                initializeETS();
+            }
+
+            saveData();
+        }
+
+        // Generar fixture SIN REPETICIONES de fechas 1-2
+        function generateFixtureWithoutRepetitions() {
+            const fixture = [];
+            const partidosJugados = new Set();
+            
+            // Agregar fechas fijas 1 y 2
+            fixture.push([...FECHAS_FIJAS[0]]);
+            fixture.push([...FECHAS_FIJAS[1]]);
+            
+            // Agregar partidos fijos al set de jugados
+            FECHAS_FIJAS[0].forEach(p => partidosJugados.add(`${p.local}-${p.visitante}`));
+            FECHAS_FIJAS[1].forEach(p => partidosJugados.add(`${p.local}-${p.visitante}`));
+
+            // Generar resto del fixture evitando repeticiones
+            const teams = [...appData.liga.equipos];
+            const totalRounds = teams.length - 1;
+            
+            for (let round = 2; round < totalRounds; round++) {
+                const roundMatches = [];
+                const usedTeams = new Set();
+                
+                for (let i = 0; i < teams.length; i++) {
+                    for (let j = i + 1; j < teams.length; j++) {
+                        const matchKey1 = `${teams[i]}-${teams[j]}`;
+                        const matchKey2 = `${teams[j]}-${teams[i]}`;
+                        
+                        if (!usedTeams.has(teams[i]) && !usedTeams.has(teams[j]) &&
+                            !partidosJugados.has(matchKey1) && !partidosJugados.has(matchKey2)) {
+                            
+                            roundMatches.push({
+                                local: teams[i],
+                                visitante: teams[j],
+                                jugado: false
+                            });
+                            partidosJugados.add(matchKey1);
+                            usedTeams.add(teams[i]);
+                            usedTeams.add(teams[j]);
+                            break;
+                        }
+                    }
+                }
+                fixture.push(roundMatches);
+            }
+            
+            return fixture;
+        }
+
+        // Navegación de Torneos
+        function showTournament(torneo) {
+            const content = document.getElementById('tournamentContent');
+            content.style.display = 'block';
+            
+            switch(torneo) {
+                case 'liga':
+                    showLiga();
+                    break;
+                case 'pakistani':
+                    showPakistani();
+                    break;
+                case 'ets':
+                    showETS();
+                    break;
+                case 'supercopa':
+                    showSupercopa();
+                    break;
+                case 'hall-fama':
+                    showHallFama();
+                    break;
+            }
+        }
+
+        function hideTournament() {
+            document.getElementById('tournamentContent').style.display = 'none';
+        }
+
+        // VISTA LIGA
+        function showLiga() {
+            const content = document.getElementById('tournamentContent');
+            content.innerHTML = `
+                <button class="back-btn" onclick="hideTournament()">🔙 Volver al Menú</button>
+                <h2>⚽ LIGA</h2>
+                
+                ${appData.liga.campeon ? `
+                    <div class="champion-badge">
+                        🏆 CAMPEÓN: ${appData.liga.campeon} 🏆
+                    </div>
+                ` : ''}
+                
+                <div class="table-container">
+                    <h3>Tabla de Posiciones</h3>
+                    ${generateStandingsTable()}
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">📈 Evolución de Posiciones</div>
+                    <canvas id="evolutionChart" width="800" height="400"></canvas>
+                    <div class="chart-legend" id="chartLegend"></div>
+                </div>
+                
+                <div class="fixture-container">
+                    <h3>Fixture</h3>
+                    ${generateFixtureView()}
+                </div>
+            `;
+
+            // Generar gráfico después de que se renderice el HTML
+            setTimeout(() => {
+                generarGraficoEvolucion();
+            }, 100);
+
+            // Abrir primeras fechas por defecto
+            setTimeout(() => {
+                const rounds = document.querySelectorAll('.match-day-header');
+                if (rounds.length > 0) {
+                    rounds[0].click(); // Fecha 1
+                    if (rounds.length > 1) rounds[1].click(); // Fecha 2
+                }
+            }, 200);
+        }
+
+        function generarGraficoEvolucion() {
+            const canvas = document.getElementById('evolutionChart');
+            const ctx = canvas.getContext('2d');
+            const legend = document.getElementById('chartLegend');
+            
+            // Limpiar canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Configuración del gráfico
+            const margin = { top: 40, right: 40, bottom: 60, left: 60 };
+            const width = canvas.width - margin.left - margin.right;
+            const height = canvas.height - margin.top - margin.bottom;
+            
+            // Escalas
+            const maxFecha = Math.max(appData.liga.historialPosiciones.length, 1);
+            const xScale = width / Math.max(maxFecha - 1, 1);
+            const yScale = height / 17; // 18 posiciones (1-18)
+            
+            // Dibujar ejes
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1;
+            
+            // Eje Y (posiciones)
+            for (let i = 1; i <= 18; i++) {
+                const y = margin.top + (i - 1) * yScale;
+                ctx.beginPath();
+                ctx.moveTo(margin.left, y);
+                ctx.lineTo(margin.left + width, y);
+                ctx.stroke();
+                
+                // Etiquetas de posición
+                ctx.fillStyle = '#666';
+                ctx.font = '12px Arial';
+                ctx.fillText(i + '°', margin.left - 25, y + 4);
+            }
+            
+            // Eje X (fechas)
+            for (let i = 0; i < maxFecha; i++) {
+                const x = margin.left + i * xScale;
+                ctx.beginPath();
+                ctx.moveTo(x, margin.top);
+                ctx.lineTo(x, margin.top + height);
+                ctx.stroke();
+                
+                // Etiquetas de fecha
+                ctx.fillStyle = '#666';
+                ctx.font = '12px Arial';
+                ctx.fillText('F' + (i + 1), x - 10, margin.top + height + 20);
+            }
+            
+            // Dibujar líneas de equipos
+            let legendHTML = '';
+            appData.liga.equipos.forEach((equipo, equipoIndex) => {
+                const color = COLORES_EQUIPOS[equipo];
+                const abreviatura = ABREVIATURAS_EQUIPOS[equipo];
+                if (!color) return;
+                
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                let puntos = [];
+                for (let fecha = 0; fecha < appData.liga.historialPosiciones.length; fecha++) {
+                    const posiciones = appData.liga.historialPosiciones[fecha];
+                    const posicion = posiciones.findIndex(p => p.equipo === equipo) + 1;
+                    
+                    if (posicion > 0) {
+                        const x = margin.left + fecha * xScale;
+                        const y = margin.top + (posicion - 1) * yScale;
+                        puntos.push({ x, y });
+                        
+                        if (fecha === 0) {
+                            ctx.moveTo(x, y);
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+
+                        // Dibujar etiqueta de 3 letras en el primer punto
+                        if (fecha === 0) {
+                            ctx.fillStyle = color;
+                            ctx.font = '10px Arial';
+                            ctx.fillText(abreviatura, x - 15, y - 5);
+                        }
+                    }
+                }
+                
+                ctx.stroke();
+                
+                // Dibujar puntos
+                ctx.fillStyle = color;
+                puntos.forEach(punto => {
+                    ctx.beginPath();
+                    ctx.arc(punto.x, punto.y, 4, 0, 2 * Math.PI);
+                    ctx.fill();
+                });
+                
+                // Agregar a leyenda
+                const borderStyle = equipo === 'RBS' ? 'style="border: 1px solid #ccc;"' : '';
+                legendHTML += `
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: ${color}; ${borderStyle}"></div>
+                        ${equipo}
+                    </div>
+                `;
+            });
+            
+            legend.innerHTML = legendHTML;
+            
+            // Título del gráfico
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText('Evolución de Posiciones por Fecha', margin.left + width/2 - 100, margin.top - 10);
+        }
+
+        function actualizarHistorialPosiciones() {
+            // Calcular posiciones actuales
+            const equiposOrdenados = [...appData.liga.equipos].sort((a, b) => {
+                const statsA = appData.liga.tabla[a] || { Pts: 0, DG: 0, GF: 0 };
+                const statsB = appData.liga.tabla[b] || { Pts: 0, DG: 0, GF: 0 };
+                
+                if (statsB.Pts !== statsA.Pts) return statsB.Pts - statsA.Pts;
+                if (statsB.DG !== statsA.DG) return statsB.DG - statsA.DG;
+                return statsB.GF - statsA.GF;
+            });
+            
+            const posicionesActuales = equiposOrdenados.map(equipo => ({ equipo }));
+            
+            // Agregar al historial
+            appData.liga.historialPosiciones.push(posicionesActuales);
+        }
+
+        function generateStandingsTable() {
+            // Usar tabla simulada si es femboy y existe, sino tabla real
+            const tablaAMostrar = (appData.userRole === 'femboy' && Object.keys(appData.simulaciones.liga).length > 0) 
+                ? appData.simulaciones.liga 
+                : appData.liga.tabla;
+
+            const equiposOrdenados = [...appData.liga.equipos].sort((a, b) => {
+                const statsA = tablaAMostrar[a] || { Pts: 0, DG: 0, GF: 0 };
+                const statsB = tablaAMostrar[b] || { Pts: 0, DG: 0, GF: 0 };
+                
+                if (statsB.Pts !== statsA.Pts) return statsB.Pts - statsA.Pts;
+                if (statsB.DG !== statsA.DG) return statsB.DG - statsA.DG;
+                return statsB.GF - statsA.GF;
+            });
+
+            let html = `
+                <table class="standings-table">
+                    <tr>
+                        <th>Pos</th>
+                        <th>Equipo</th>
+                        <th>PJ</th>
+                        <th>G</th>
+                        <th>E</th>
+                        <th>P</th>
+                        <th>GF</th>
+                        <th>GC</th>
+                        <th>DG</th>
+                        <th>Pts</th>
+                    </tr>
+            `;
+
+            equiposOrdenados.forEach((equipo, index) => {
+                const stats = tablaAMostrar[equipo] || { PJ: 0, G: 0, E: 0, P: 0, GF: 0, GC: 0, DG: 0, Pts: 0 };
+                const color = COLORES_EQUIPOS[equipo] || '#666';
+                const textColor = equipo === 'RBS' ? 'style="color: #333; background-color: #f8f9fa; border: 1px solid #ddd; padding: 2px 5px; border-radius: 3px;"' : '';
+                
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><strong ${textColor}>${equipo}</strong></td>
+                        <td>${stats.PJ}</td>
+                        <td>${stats.G}</td>
+                        <td>${stats.E}</td>
+                        <td>${stats.P}</td>
+                        <td>${stats.GF}</td>
+                        <td>${stats.GC}</td>
+                        <td>${stats.DG}</td>
+                        <td><strong>${stats.Pts}</strong></td>
+                    </tr>
+                `;
+            });
+
+            html += '</table>';
+            
+            // Indicador de qué tabla se está mostrando
+            if (appData.userRole === 'femboy' && Object.keys(appData.simulaciones.liga).length > 0) {
+                html += '<p style="text-align: center; color: #17a2b8; margin-top: 10px;">🔮 Tabla con simulaciones temporales</p>';
+            }
+            
+            return html;
+        }
+
+        function generateFixtureView() {
+            let html = '';
+            
+            appData.liga.fixture.forEach((fecha, indexFecha) => {
+                const fechaNum = indexFecha + 1;
+                html += `
+                    <div class="match-day">
+                        <div class="match-day-header" onclick="toggleRound(${indexFecha})">
+                            <span>Fecha ${fechaNum}</span>
+                            <span>▼</span>
+                        </div>
+                        <div class="matches-container" id="round-${indexFecha}" style="display: ${fechaNum <= 2 ? 'block' : 'none'}">
+                            ${generateMatchesForRound(fecha, indexFecha)}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            return html;
+        }
+
+        function toggleRound(roundIndex) {
+            const roundDiv = document.getElementById(`round-${roundIndex}`);
+            roundDiv.style.display = roundDiv.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function generateMatchesForRound(partidos, numFecha) {
+            let html = '';
+            
+            partidos.forEach((partido, indexPartido) => {
+                const key = `${partido.local}-${partido.visitante}`;
+                const resultadoReal = appData.liga.partidosJugados[key];
+                const jugadoReal = !!resultadoReal;
+                const esFemboy = appData.userRole === 'femboy';
+                const esFechaInicial = numFecha < 2;
+                
+                let resultadoHTML = '';
+                let botonHTML = '';
+                
+                // SIEMPRE mostrar resultado si existe
+                if (jugadoReal) {
+                    resultadoHTML = `<span class="result" style="color: #28a745;">${resultadoReal.local}-${resultadoReal.visitante}</span>`;
+                } else if (appData.simulaciones.liga[key]) {
+                    const sim = appData.simulaciones.liga[key];
+                    resultadoHTML = `<span class="result simulated">${sim.local}-${sim.visitante}</span>`;
+                } else {
+                    resultadoHTML = '<span class="result" style="color: #999;">-</span>';
+                }
+
+                if (esFemboy) {
+                    if (!jugadoReal) {
+                        botonHTML = `<button class="btn btn-simulate" onclick="simularPartidoLiga('${partido.local}', '${partido.visitante}', ${numFecha})">Simular</button>`;
                     } else {
-                        fecha.push({local: visitante, visitante: local, jugado: false});
+                        botonHTML = `<button class="btn" disabled>Jugado</button>`;
+                    }
+                } else {
+                    // Modo Admin
+                    if (esFechaInicial) {
+                        const resultadoActual = resultadoReal || {local: '', visitante: ''};
+                        botonHTML = `
+                            <div class="result-inputs">
+                                <input type="number" class="result-input" id="local-${key}" value="${resultadoActual.local}" min="0">
+                                <span> - </span>
+                                <input type="number" class="result-input" id="visitante-${key}" value="${resultadoActual.visitante}" min="0">
+                                <button class="btn btn-generate" onclick="guardarResultadoManual('${partido.local}', '${partido.visitante}', ${numFecha})">
+                                    ${jugadoReal ? 'Actualizar' : 'Guardar'}
+                                </button>
+                                <button class="btn btn-simulate" onclick="generarResultadoLiga('${partido.local}', '${partido.visitante}', ${numFecha})">
+                                    Generar
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        if (!jugadoReal) {
+                            botonHTML = `<button class="btn btn-generate" onclick="generarResultadoLiga('${partido.local}', '${partido.visitante}', ${numFecha})">Generar</button>`;
+                        } else {
+                            botonHTML = `<button class="btn" disabled>Jugado</button>`;
+                        }
+                    }
+                }
+
+                html += `
+                    <div class="match ${jugadoReal ? 'played' : ''}">
+                        <div class="teams">
+                            <strong>${partido.local}</strong>
+                            <span class="vs">VS</span>
+                            <strong>${partido.visitante}</strong>
+                        </div>
+                        ${resultadoHTML}
+                        ${botonHTML}
+                    </div>
+                `;
+            });
+            
+            return html;
+        }
+
+        // Funciones de resultados - LIGA
+        async function guardarResultadoManual(local, visitante, numFecha) {
+            const key = `${local}-${visitante}`;
+            const inputLocal = document.getElementById(`local-${key}`);
+            const inputVisitante = document.getElementById(`visitante-${key}`);
+            
+            const resultado = {
+                local: parseInt(inputLocal.value) || 0,
+                visitante: parseInt(inputVisitante.value) || 0
+            };
+
+            if (appData.userRole === 'pato') {
+                appData.liga.partidosJugados[key] = resultado;
+                actualizarTablaLiga(local, visitante, resultado);
+                appData.liga.fixture[numFecha].forEach(p => {
+                    if (p.local === local && p.visitante === visitante) {
+                        p.jugado = true;
+                    }
+                });
+                await saveData();
+                playGoalSound();
+            }
+
+            // Actualizar vista sin recargar todo
+            updateSingleMatch(local, visitante, resultado, numFecha);
+        }
+
+        async function generarResultadoLiga(local, visitante, numFecha) {
+            const resultado = generarResultadoAleatorio();
+            
+            if (appData.userRole === 'pato') {
+                const key = `${local}-${visitante}`;
+                appData.liga.partidosJugados[key] = resultado;
+                actualizarTablaLiga(local, visitante, resultado);
+                appData.liga.fixture[numFecha].forEach(p => {
+                    if (p.local === local && p.visitante === visitante) {
+                        p.jugado = true;
+                    }
+                });
+                await saveData();
+                playGoalSound();
+            } else {
+                const key = `${local}-${visitante}`;
+                appData.simulaciones.liga[key] = resultado;
+                actualizarTablaSimulada(local, visitante, resultado);
+            }
+
+            // Actualizar vista sin recargar todo
+            updateSingleMatch(local, visitante, resultado, numFecha);
+        }
+
+        function simularPartidoLiga(local, visitante, numFecha) {
+            const resultado = generarResultadoAleatorio();
+            const key = `${local}-${visitante}`;
+            appData.simulaciones.liga[key] = resultado;
+            actualizarTablaSimulada(local, visitante, resultado);
+            playGoalSound();
+            updateSingleMatch(local, visitante, resultado, numFecha);
+        }
+
+        function updateSingleMatch(local, visitante, resultado, numFecha) {
+            // Actualizar solo el partido específico sin recargar todo
+            const key = `${local}-${visitante}`;
+            const partidos = document.querySelectorAll('.match');
+            
+            partidos.forEach(partido => {
+                const teams = partido.querySelector('.teams').textContent;
+                if (teams.includes(local) && teams.includes(visitante)) {
+                    const resultSpan = partido.querySelector('.result');
+                    const buttons = partido.querySelectorAll('button');
+                    
+                    if (resultSpan) {
+                        resultSpan.textContent = `${resultado.local}-${resultado.visitante}`;
+                        if (appData.userRole === 'pato') {
+                            resultSpan.style.color = '#28a745';
+                        } else {
+                            resultSpan.className = 'result simulated';
+                        }
+                    }
+                    
+                    // Deshabilitar botones si es admin y resultado real
+                    if (appData.userRole === 'pato') {
+                        buttons.forEach(btn => {
+                            if (!btn.disabled && btn.textContent !== 'Guardar' && btn.textContent !== 'Actualizar') {
+                                btn.disabled = true;
+                                btn.textContent = 'Jugado';
+                            }
+                        });
+                        partido.classList.add('played');
+                    }
+                }
+            });
+            
+            // Actualizar tabla y gráfico
+            const oldTable = document.querySelector('.standings-table');
+            if (oldTable) {
+                oldTable.outerHTML = generateStandingsTable();
+            }
+            
+            // Actualizar historial y gráfico si es admin
+            if (appData.userRole === 'pato') {
+                actualizarHistorialPosiciones();
+                setTimeout(() => {
+                    generarGraficoEvolucion();
+                }, 100);
+            }
+        }
+
+        function generarResultadoAleatorio() {
+            const golesLocal = Math.floor(Math.random() * 5);
+            const golesVisitante = Math.floor(Math.random() * 4);
+            return { local: golesLocal, visitante: golesVisitante };
+        }
+
+        function actualizarTablaLiga(local, visitante, resultado) {
+            const statsLocal = appData.liga.tabla[local];
+            const statsVisitante = appData.liga.tabla[visitante];
+
+            // Reiniciar si no existen
+            if (!statsLocal.PJ) statsLocal.PJ = 0;
+            if (!statsVisitante.PJ) statsVisitante.PJ = 0;
+
+            statsLocal.PJ++; statsVisitante.PJ++;
+            statsLocal.GF += resultado.local; statsLocal.GC += resultado.visitante;
+            statsVisitante.GF += resultado.visitante; statsVisitante.GC += resultado.local;
+            statsLocal.DG = statsLocal.GF - statsLocal.GC;
+            statsVisitante.DG = statsVisitante.GF - statsVisitante.GC;
+
+            if (resultado.local > resultado.visitante) {
+                statsLocal.G++; statsVisitante.P++;
+                statsLocal.Pts += 3;
+            } else if (resultado.local < resultado.visitante) {
+                statsVisitante.G++; statsLocal.P++;
+                statsVisitante.Pts += 3;
+            } else {
+                statsLocal.E++; statsVisitante.E++;
+                statsLocal.Pts += 1; statsVisitante.Pts += 1;
+            }
+
+            checkCampeonLiga();
+        }
+
+        function actualizarTablaSimulada(local, visitante, resultado) {
+            if (!appData.simulaciones.liga[local]) {
+                appData.simulaciones.liga[local] = { ...appData.liga.tabla[local] };
+            }
+            if (!appData.simulaciones.liga[visitante]) {
+                appData.simulaciones.liga[visitante] = { ...appData.liga.tabla[visitante] };
+            }
+
+            const statsLocal = appData.simulaciones.liga[local];
+            const statsVisitante = appData.simulaciones.liga[visitante];
+
+            if (!statsLocal.PJ) statsLocal.PJ = 0;
+            if (!statsVisitante.PJ) statsVisitante.PJ = 0;
+
+            statsLocal.PJ++; statsVisitante.PJ++;
+            statsLocal.GF += resultado.local; statsLocal.GC += resultado.visitante;
+            statsVisitante.GF += resultado.visitante; statsVisitante.GC += resultado.local;
+            statsLocal.DG = statsLocal.GF - statsLocal.GC;
+            statsVisitante.DG = statsVisitante.GF - statsVisitante.GC;
+
+            if (resultado.local > resultado.visitante) {
+                statsLocal.G++; statsVisitante.P++;
+                statsLocal.Pts += 3;
+            } else if (resultado.local < resultado.visitante) {
+                statsVisitante.G++; statsLocal.P++;
+                statsVisitante.Pts += 3;
+            } else {
+                statsLocal.E++; statsVisitante.E++;
+                statsLocal.Pts += 1; statsVisitante.Pts += 1;
+            }
+        }
+
+        function checkCampeonLiga() {
+            const equiposOrdenados = [...appData.liga.equipos].sort((a, b) => {
+                const statsA = appData.liga.tabla[a];
+                const statsB = appData.liga.tabla[b];
+                if (statsB.Pts !== statsA.Pts) return statsB.Pts - statsA.Pts;
+                return statsB.DG - statsA.DG;
+            });
+
+            const partidosJugados = Object.keys(appData.liga.partidosJugados).length;
+            const partidosTotales = (appData.liga.equipos.length * (appData.liga.equipos.length - 1)) / 2;
+            
+            if (partidosJugados >= partidosTotales * 0.8) {
+                const nuevoCampeon = equiposOrdenados[0];
+                if (nuevoCampeon !== appData.liga.campeon) {
+                    appData.liga.campeon = nuevoCampeon;
+                    // Mostrar popup de confirmación para Hall de la Fama
+                    if (appData.userRole === 'pato') {
+                        setTimeout(() => {
+                            if (confirm(`¿Guardar a ${nuevoCampeon} como campeón de la Liga en el Hall de la Fama (Temporada 6)?`)) {
+                                appData.hallFama.temporadas[6].liga = nuevoCampeon;
+                                saveData();
+                            }
+                        }, 500);
                     }
                 }
             }
-            fixture.push(fecha);
-            teams.splice(1, 0, teams.pop());
         }
-        return fixture;
-    }
 
-    // --- LIGA ---
-    function generarLiga(){
-        ligaDiv.innerHTML = "";
-        const btnVolver = crearBotonVolver();
-        ligaDiv.appendChild(btnVolver);
-        
-        const titulo = document.createElement('h2');
-        titulo.innerHTML = '⚽ LIGA ⚽';
-        ligaDiv.appendChild(titulo);
-        
-        if (!fixtureLiga) {
-            fixtureLiga = generarFixture();
-            localStorage.setItem('fixtureLiga', JSON.stringify(fixtureLiga));
-        }
-        
-        fixtureLiga.forEach((fecha, indexFecha) => {
-            fecha.forEach(partido => {
-                const key = `${partido.local}-${partido.visitante}`;
-                partido.jugado = partidosJugados[key] || false;
-            });
-        });
-
-        // TABLA ACTUALIZADA CON ESCUDOS (TAMAÑO CORREGIDO)
-        const tabla = document.createElement('table');
-        tabla.classList.add('tabla-liga');
-        tabla.innerHTML="<tr><th>Pos</th><th>Equipo</th><th>P</th><th>G</th><th>E</th><th>Pd</th><th>GF</th><th>GC</th><th>D</th></tr>";
-        
-        const equiposOrdenados = [...equipos].sort((a, b) => {
-            if (tablaLiga[b].P !== tablaLiga[a].P) return tablaLiga[b].P - tablaLiga[a].P;
-            if (tablaLiga[b].D !== tablaLiga[a].D) return tablaLiga[b].D - tablaLiga[a].D;
-            return tablaLiga[b].GF - tablaLiga[a].GF;
-        });
-        
-        equiposOrdenados.forEach((eq, index) => {
-            const tr = document.createElement('tr');
-            const escudoHTML = getEscudo(eq);
-            tr.innerHTML=`<td>${index + 1}</td><td class="equipo-con-escudo">${escudoHTML}${eq}</td><td>${tablaLiga[eq].P}</td><td>${tablaLiga[eq].G}</td><td>${tablaLiga[eq].E}</td><td>${tablaLiga[eq].PD}</td><td>${tablaLiga[eq].GF}</td><td>${tablaLiga[eq].GC}</td><td>${tablaLiga[eq].D}</td>`;
-            tabla.appendChild(tr);
-        });
-        ligaDiv.appendChild(tabla);
-
-        // FECHAS (NO SE CIERRAN AL GENERAR)
-        fixtureLiga.forEach((fechaPartidos, numFecha) => {
-            const fechaDiv = document.createElement('div');
-            fechaDiv.classList.add('fecha');
-            const header = document.createElement('div');
-            header.classList.add('fecha-header');
-            header.innerHTML=`<span>Fecha ${numFecha + 1}</span><span>▼</span>`;
-            const partidosDiv = document.createElement('div');
-            partidosDiv.classList.add('hidden');
-            
-            fechaPartidos.forEach(partido => {
-                const p = document.createElement('div');
-                p.classList.add('partido');
-                if (partido.jugado) p.classList.add('jugado');
+        // COPA PAKISTANI - TOMA LOS 16 PRIMEROS DE LA LIGA
+        function getTop16Liga() {
+            const equiposOrdenados = [...appData.liga.equipos].sort((a, b) => {
+                const statsA = appData.liga.tabla[a] || { Pts: 0, DG: 0, GF: 0 };
+                const statsB = appData.liga.tabla[b] || { Pts: 0, DG: 0, GF: 0 };
                 
-                const key = `${partido.local}-${partido.visitante}`;
-                const resultado = partidosJugados[key] || null;
-                
-                const escudoLocal = getEscudo(partido.local);
-                const escudoVisitante = getEscudo(partido.visitante);
-                
-                const botonTexto = esAdmin ? 
-                    (partido.jugado ? 'Jugado' : 'Generar') : 
-                    (partido.jugado ? 'Jugado' : 'Simular');
-                
-                const botonClase = esAdmin ? 'generar' : (partido.jugado ? 'generar' : 'generar simular');
-                
-                p.innerHTML = `
-                    <span class="team-cell">${escudoLocal}${partido.local} vs ${partido.visitante}${escudoVisitante}</span>
-                    <button class="${botonClase}" ${partido.jugado ? 'disabled' : ''} 
-                        onclick="window.generarResultadoLiga('${partido.local}','${partido.visitante}', ${numFecha}, ${esAdmin})">
-                        ${botonTexto}
-                    </button>
-                    <span class="result ${!esAdmin && !partido.jugado ? 'resultado-simulado' : ''}">
-                        ${resultado ? `${resultado.local}-${resultado.visitante}` : ''}
-                    </span>
-                `;
-                partidosDiv.appendChild(p);
+                if (statsB.Pts !== statsA.Pts) return statsB.Pts - statsA.Pts;
+                if (statsB.DG !== statsA.DG) return statsB.DG - statsA.DG;
+                return statsB.GF - statsA.GF;
             });
             
-            header.addEventListener('click',()=>{
-                partidosDiv.classList.toggle('hidden');
-            });
-            fechaDiv.appendChild(header);
-            fechaDiv.appendChild(partidosDiv);
-            ligaDiv.appendChild(fechaDiv);
-        });
-    }
-
-    window.generarResultadoLiga = function(localEq, visitanteEq, numFecha, esAdminParam){
-        const resultado = generarResultadoSimulado();
-        
-        if (!esAdminParam) {
-            // MODO FEMBOY: Solo muestra resultado simulado
-            const partidos = document.querySelectorAll('.partido');
-            partidos.forEach(partido => {
-                const teams = partido.querySelector('.team-cell').textContent;
-                if (teams.includes(localEq) && teams.includes(visitanteEq)) {
-                    const span = partido.querySelector('.result');
-                    span.innerHTML = `<span class="resultado-simulado">Simulado: ${resultado.local}-${resultado.visitante}</span>`;
-                    span.style.color = '#17a2b8';
-                    span.style.fontStyle = 'italic';
-                }
-            });
-            return;
+            return equiposOrdenados.slice(0, 16);
         }
-        
-        // MODO PATO: Guarda resultado real
-        const key = `${localEq}-${visitanteEq}`;
-        partidosJugados[key] = resultado;
-        
-        tablaLiga[localEq].GF += resultado.local;
-        tablaLiga[localEq].GC += resultado.visitante;
-        tablaLiga[visitanteEq].GF += resultado.visitante;
-        tablaLiga[visitanteEq].GC += resultado.local;
-        
-        if(resultado.local > resultado.visitante) {
-            tablaLiga[localEq].P += 3;
-            tablaLiga[localEq].G++;
-            tablaLiga[visitanteEq].PD++;
-        } else if(resultado.local < resultado.visitante) {
-            tablaLiga[visitanteEq].P += 3;
-            tablaLiga[visitanteEq].G++;
-            tablaLiga[localEq].PD++;
-        } else {
-            tablaLiga[localEq].P++;
-            tablaLiga[visitanteEq].P++;
-            tablaLiga[localEq].E++;
-            tablaLiga[visitanteEq].E++;
-        }
-        
-        tablaLiga[localEq].D = tablaLiga[localEq].GF - tablaLiga[localEq].GC;
-        tablaLiga[visitanteEq].D = tablaLiga[visitanteEq].GF - tablaLiga[visitanteEq].GC;
-        
-        fixtureLiga[numFecha].forEach(partido => {
-            if (partido.local === localEq && partido.visitante === visitanteEq) {
-                partido.jugado = true;
-            }
-        });
-        
-        localStorage.setItem('tablaLiga', JSON.stringify(tablaLiga));
-        localStorage.setItem('partidosJugados', JSON.stringify(partidosJugados));
-        localStorage.setItem('fixtureLiga', JSON.stringify(fixtureLiga));
-        
-        generarLiga();
-    }
 
-    // --- COPA PAKISTANI ---
-    let pakistaniFases = { 
-        octavos: [], cuartos: [], semis: [], final: [], 
-        campeon: null 
-    };
-
-    function iniciarPakistani(){
-        if (!esAdmin && pakistaniFases.campeon) {
-            mostrarPakistani('final');
-            return;
-        }
-        
-        if (pakistaniFases.campeon) {
-            if (confirm('Ya hay un campeón. ¿Reiniciar la copa?')) {
-                reiniciarCopaPakistani();
-            }
-        }
-        
-        let ranking = Object.entries(tablaLiga).sort((a,b) => b[1].P - a[1].P);
-        let primeros16 = ranking.slice(0,16).map(e => e[0]);
-        primeros16.sort(() => Math.random() - 0.5);
-        
-        pakistaniFases.octavos = [];
-        for(let i = 0; i < 16; i += 2) {
-            pakistaniFases.octavos.push({
-                local: primeros16[i],
-                visitante: primeros16[i+1],
-                jugado: false,
-                resultado: null,
-                ganador: null
-            });
-        }
-        
-        guardarDatosPakistani();
-        mostrarPakistani('octavos');
-    }
-
-    function reiniciarCopaPakistani() {
-        pakistaniFases = { octavos: [], cuartos: [], semis: [], final: [], campeon: null };
-        localStorage.removeItem('pakistaniFases');
-    }
-
-    function guardarDatosPakistani() {
-        localStorage.setItem('pakistaniFases', JSON.stringify(pakistaniFases));
-    }
-
-    function cargarDatosPakistani() {
-        const datos = localStorage.getItem('pakistaniFases');
-        if (datos) {
-            pakistaniFases = JSON.parse(datos);
-        }
-    }
-
-    function mostrarPakistani(fase){
-        pakistaniDiv.innerHTML = "";
-        const btnVolver = crearBotonVolver();
-        pakistaniDiv.appendChild(btnVolver);
-        
-        const titulo = document.createElement('h2');
-        titulo.innerHTML = `🏅 Copa Pakistani - ${fase.charAt(0).toUpperCase() + fase.slice(1)}`;
-        pakistaniDiv.appendChild(titulo);
-        
-        let partidos = pakistaniFases[fase];
-        
-        if (partidos.length === 0) {
-            pakistaniDiv.appendChild(document.createElement('p')).textContent = 'No hay partidos para esta fase.';
-            return;
-        }
-        
-        partidos.forEach((partido, index) => {
-            const div = document.createElement('div');
-            div.classList.add('partido');
-            if (partido.jugado) div.classList.add('jugado');
+        function initializePakistani() {
+            const top16 = getTop16Liga();
+            top16.sort(() => Math.random() - 0.5);
             
-            let resultadoHTML = '';
-            if (partido.jugado) {
-                const escudoGanador = getEscudo(partido.ganador);
-                resultadoHTML = `<span class="resultado" style="color: ${partido.ganador === partido.local ? 'green' : 'red'};">
-                    ${partido.resultado.local}-${partido.resultado.visitante} 
-                    (🏆 ${escudoGanador}${partido.ganador})
-                </span>`;
-            }
-            
-            const escudoLocal = getEscudo(partido.local);
-            const escudoVisitante = getEscudo(partido.visitante);
-            
-            const botonTexto = esAdmin ? 
-                (partido.jugado ? 'Jugado' : 'Generar') : 
-                (partido.jugado ? 'Jugado' : 'Simular');
-            
-            const botonClase = esAdmin ? 'generar' : (partido.jugado ? 'generar' : 'generar simular');
-            
-            div.innerHTML = `
-                <span class="team-cell">${escudoLocal}${partido.local} vs ${partido.visitante}${escudoVisitante}</span>
-                <div>
-                    <button class="${botonClase}" ${partido.jugado ? 'disabled' : ''} 
-                        onclick="window.simularResultadoPakistani('${fase}', ${index}, ${esAdmin})">
-                        ${botonTexto}
-                    </button>
-                    ${resultadoHTML}
-                </div>
-            `;
-            pakistaniDiv.appendChild(div);
-        });
-        
-        const todosJugados = partidos.every(p => p.jugado);
-        if (todosJugados && fase !== 'final' && esAdmin) {
-            const siguienteFase = getSiguienteFase(fase);
-            const btnSiguiente = document.createElement('button');
-            btnSiguiente.textContent = `Avanzar a ${siguienteFase}`;
-            btnSiguiente.style.cssText = 'padding: 10px; margin: 10px 0; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;';
-            btnSiguiente.onclick = () => avanzarFasePakistani(fase);
-            pakistaniDiv.appendChild(btnSiguiente);
-        }
-        
-        if (pakistaniFases.campeon) {
-            const escudoCampeon = getEscudo(pakistaniFases.campeon);
-            const campeonDiv = document.createElement('div');
-            campeonDiv.style.cssText = 'background: gold; padding: 15px; border-radius: 10px; margin: 15px 0; text-align: center; font-weight: bold; font-size: 18px;';
-            campeonDiv.innerHTML = `🏆 CAMPEÓN: ${escudoCampeon}${pakistaniFases.campeon} 🏆`;
-            pakistaniDiv.appendChild(campeonDiv);
-        }
-    }
-
-    window.simularResultadoPakistani = function(fase, index, esAdminParam){
-        const resultado = generarResultadoSimulado();
-        
-        if (!esAdminParam) {
-            // MODO FEMBOY: Solo muestra simulación
-            const partidos = pakistaniDiv.querySelectorAll('.partido');
-            const partidoDiv = partidos[index];
-            const resultadoSpan = partidoDiv.querySelector('.resultado') || document.createElement('span');
-            resultadoSpan.className = 'resultado resultado-simulado';
-            resultadoSpan.innerHTML = `Simulado: ${resultado.local}-${resultado.visitante}`;
-            resultadoSpan.style.color = '#17a2b8';
-            resultadoSpan.style.fontStyle = 'italic';
-            
-            if (!partidoDiv.querySelector('.resultado')) {
-                partidoDiv.querySelector('div').appendChild(resultadoSpan);
-            }
-            return;
-        }
-        
-        // MODO PATO: Guarda resultado real
-        window.resultadoPakistani(fase, index);
-    }
-
-    function getSiguienteFase(faseActual) {
-        const fases = ['octavos', 'cuartos', 'semis', 'final'];
-        const index = fases.indexOf(faseActual);
-        return fases[index + 1];
-    }
-
-    function avanzarFasePakistani(faseActual) {
-        const partidos = pakistaniFases[faseActual];
-        const ganadores = partidos.map(p => p.ganador);
-        
-        const siguienteFase = getSiguienteFase(faseActual);
-        
-        if (siguienteFase === 'final') {
-            pakistaniFases.final = [{
-                local: ganadores[0],
-                visitante: ganadores[1],
-                jugado: false,
-                resultado: null,
-                ganador: null
-            }];
-        } else {
-            pakistaniFases[siguienteFase] = [];
-            for (let i = 0; i < ganadores.length; i += 2) {
-                pakistaniFases[siguienteFase].push({
-                    local: ganadores[i],
-                    visitante: ganadores[i+1],
+            appData.pakistani.fases.octavos = [];
+            for (let i = 0; i < 16; i += 2) {
+                appData.pakistani.fases.octavos.push({
+                    local: top16[i],
+                    visitante: top16[i + 1],
                     jugado: false,
                     resultado: null,
                     ganador: null
                 });
             }
         }
-        
-        guardarDatosPakistani();
-        mostrarPakistani(siguienteFase);
-    }
 
-    window.resultadoPakistani = function(fase, index){
-        let partido = pakistaniFases[fase][index];
-        let local = 0, visitante = 0;
-        for(let i = 0; i < 5; i++){
-            const tiro = Math.floor(Math.random() * 3);
-            if(tiro === 1) local++; 
-            else if(tiro === 2) visitante++;
-        }
-        
-        let ganador;
-        if (local > visitante) {
-            ganador = partido.local;
-        } else if (visitante > local) {
-            ganador = partido.visitante;
-        } else {
-            ganador = Math.random() > 0.5 ? partido.local : partido.visitante;
-            local = ganador === partido.local ? local + 1 : local;
-            visitante = ganador === partido.visitante ? visitante + 1 : visitante;
-        }
-        
-        partido.jugado = true;
-        partido.resultado = { local, visitante };
-        partido.ganador = ganador;
-        
-        if (fase === 'final') {
-            pakistaniFases.campeon = ganador;
-        }
-        
-        guardarDatosPakistani();
-        mostrarPakistani(fase);
-    }
-
-    // --- COPA ETS ---
-    let etsFases = { 
-        cuartos: [], semis: [], final: [], 
-        campeon: null 
-    };
-
-    function iniciarETS(){
-        if (!esAdmin && etsFases.campeon) {
-            mostrarETS('final', 'ida');
-            return;
-        }
-        
-        if (etsFases.campeon) {
-            if (confirm('Ya hay un campeón. ¿Reiniciar la copa?')) {
-                reiniciarCopaETS();
-            }
-        }
-        
-        let ranking = Object.entries(tablaLiga).sort((a,b) => b[1].P - a[1].P);
-        let primeros8 = ranking.slice(0,8).map(e => e[0]);
-        primeros8.sort(() => Math.random() - 0.5);
-        
-        etsFases.cuartos = [];
-        for(let i = 0; i < 8; i += 2) {
-            etsFases.cuartos.push({
-                local: primeros8[i],
-                visitante: primeros8[i+1],
-                ida: { jugado: false, resultado: null },
-                vuelta: { jugado: false, resultado: null },
-                global: { local: 0, visitante: 0 },
-                ganador: null
-            });
-        }
-        
-        guardarDatosETS();
-        mostrarETS('cuartos', 'ida');
-    }
-
-    function reiniciarCopaETS() {
-        etsFases = { cuartos: [], semis: [], final: [], campeon: null };
-        localStorage.removeItem('etsFases');
-    }
-
-    function guardarDatosETS() {
-        localStorage.setItem('etsFases', JSON.stringify(etsFases));
-    }
-
-    function cargarDatosETS() {
-        const datos = localStorage.getItem('etsFases');
-        if (datos) {
-            etsFases = JSON.parse(datos);
-        }
-    }
-
-    function mostrarETS(fase, tipoPartido){
-        etsDiv.innerHTML = "";
-        const btnVolver = crearBotonVolver();
-        etsDiv.appendChild(btnVolver);
-        
-        const titulo = document.createElement('h2');
-        titulo.innerHTML = `🌟 Copa ETS - ${fase.charAt(0).toUpperCase() + fase.slice(1)} (${tipoPartido.toUpperCase()})`;
-        etsDiv.appendChild(titulo);
-        
-        let partidos = etsFases[fase];
-        
-        partidos.forEach((partido, index) => {
-            const div = document.createElement('div');
-            div.classList.add('partido');
-            
-            let infoResultado = '';
-            if (partido.ida.jugado) {
-                infoResultado += `Ida: ${partido.ida.resultado.local}-${partido.ida.resultado.visitante} `;
-            }
-            if (partido.vuelta.jugado) {
-                infoResultado += `Vuelta: ${partido.vuelta.resultado.local}-${partido.vuelta.resultado.visitante} `;
-            }
-            if (partido.ganador) {
-                const escudoGanador = getEscudo(partido.ganador);
-                infoResultado += `<br><strong>Global: ${partido.global.local}-${partido.global.visitante} (🏆 ${escudoGanador}${partido.ganador})</strong>`;
-            }
-            
-            const partidoJugado = tipoPartido === 'ida' ? partido.ida.jugado : partido.vuelta.jugado;
-            
-            const escudoLocal = getEscudo(partido.local);
-            const escudoVisitante = getEscudo(partido.visitante);
-            
-            const botonTexto = esAdmin ? 
-                (partidoJugado ? 'Jugado' : `Jugar ${tipoPartido}`) : 
-                (partidoJugado ? 'Jugado' : `Simular ${tipoPartido}`);
-            
-            const botonClase = esAdmin ? 'generar' : (partidoJugado ? 'generar' : 'generar simular');
-            
-            div.innerHTML = `
-                <div>
-                    <strong>${escudoLocal}${partido.local} vs ${partido.visitante}${escudoVisitante}</strong>
-                    <div style="font-size: 12px; color: #666;">${infoResultado}</div>
-                </div>
-                <div>
-                    <button class="${botonClase}" ${partidoJugado ? 'disabled' : ''} 
-                        onclick="window.simularResultadoETS('${fase}', ${index}, '${tipoPartido}', ${esAdmin})">
-                        ${botonTexto}
-                    </button>
-                </div>
-            `;
-            
-            if (partidoJugado) div.classList.add('jugado');
-            etsDiv.appendChild(div);
-        });
-        
-        if (fase !== 'final' && esAdmin) {
-            const todosIdaJugados = partidos.every(p => p.ida.jugado);
-            const todosVueltaJugados = partidos.every(p => p.vuelta.jugado);
-            
-            if (tipoPartido === 'ida' && todosIdaJugados) {
-                const btnVuelta = document.createElement('button');
-                btnVuelta.textContent = 'Ir a Partidos de Vuelta';
-                btnVuelta.style.cssText = 'padding: 10px; margin: 10px 0; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;';
-                btnVuelta.onclick = () => mostrarETS(fase, 'vuelta');
-                etsDiv.appendChild(btnVuelta);
-            }
-            
-            if (tipoPartido === 'vuelta' && todosVueltaJugados) {
-                const ganadores = partidos.map(p => p.ganador);
-                const siguienteFase = getSiguienteFaseETS(fase);
+        function showPakistani() {
+            const content = document.getElementById('tournamentContent');
+            content.innerHTML = `
+                <button class="back-btn" onclick="hideTournament()">🔙 Volver al Menú</button>
+                <h2>🏅 COPA PAKISTANI</h2>
                 
-                if (siguienteFase) {
-                    etsFases[siguienteFase] = [];
-                    for (let i = 0; i < ganadores.length; i += 2) {
-                        etsFases[siguienteFase].push({
-                            local: ganadores[i],
-                            visitante: ganadores[i+1],
-                            ida: { jugado: false, resultado: null },
-                            vuelta: { jugado: false, resultado: null },
-                            global: { local: 0, visitante: 0 },
-                            ganador: null
-                        });
-                    }
-                    guardarDatosETS();
-                    
-                    const btnSiguiente = document.createElement('button');
-                    btnSiguiente.textContent = `Avanzar a ${siguienteFase}`;
-                    btnSiguiente.style.cssText = 'padding: 10px; margin: 10px 0; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;';
-                    btnSiguiente.onclick = () => mostrarETS(siguienteFase, 'ida');
-                    etsDiv.appendChild(btnSiguiente);
+                ${appData.pakistani.campeon ? `
+                    <div class="champion-badge">
+                        🏆 CAMPEÓN: ${appData.pakistani.campeon} 🏆
+                    </div>
+                ` : ''}
+                
+                <div style="text-align: center; margin: 20px 0;">
+                    <p style="color: #666; font-size: 1.1em;">
+                        Sistema de eliminación directa - 16 equipos (top de la liga)
+                    </p>
+                    <p><small>Clasifican los 16 primeros de la tabla de la liga</small></p>
+                    ${appData.userRole === 'pato' ? `
+                        <button class="btn btn-generate" onclick="iniciarPakistani()" style="margin: 10px;">
+                            Reiniciar Copa
+                        </button>
+                    ` : ''}
+                </div>
+                
+                <div class="fases-container">
+                    ${generarVistaFase('octavos', 'Octavos de Final')}
+                    ${appData.pakistani.fases.octavos.every(p => p.jugado) ? generarVistaFase('cuartos', 'Cuartos de Final') : ''}
+                    ${appData.pakistani.fases.cuartos.every(p => p.jugado) ? generarVistaFase('semis', 'Semifinales') : ''}
+                    ${appData.pakistani.fases.semis.every(p => p.jugado) ? generarVistaFase('final', 'Final') : ''}
+                </div>
+
+                ${appData.userRole === 'pato' && appData.pakistani.fases.octavos.every(p => p.jugado) && appData.pakistani.fases.cuartos.length === 0 ? `
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button class="btn btn-advance" onclick="avanzarFasePakistani('octavos')">
+                            🚀 Avanzar a Cuartos de Final
+                        </button>
+                    </div>
+                ` : ''}
+
+                ${appData.userRole === 'pato' && appData.pakistani.fases.cuartos.every(p => p.jugado) && appData.pakistani.fases.semis.length === 0 ? `
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button class="btn btn-advance" onclick="avanzarFasePakistani('cuartos')">
+                            🚀 Avanzar a Semifinales
+                        </button>
+                    </div>
+                ` : ''}
+
+                ${appData.userRole === 'pato' && appData.pakistani.fases.semis.every(p => p.jugado) && appData.pakistani.fases.final.length === 0 ? `
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button class="btn btn-advance" onclick="avanzarFasePakistani('semis')">
+                            🚀 Avanzar a Final
+                        </button>
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        function generarVistaFase(fase, titulo) {
+            const partidos = appData.pakistani.fases[fase];
+            if (!partidos || partidos.length === 0) return '';
+
+            let html = `<h3>${titulo}</h3>`;
+            partidos.forEach((partido, index) => {
+                html += `
+                    <div class="match ${partido.jugado ? 'played' : ''}">
+                        <div class="teams">
+                            <strong>${partido.local}</strong>
+                            <span class="vs">VS</span>
+                            <strong>${partido.visitante}</strong>
+                        </div>
+                        ${partido.jugado ? `
+                            <span class="result" style="color: #28a745;">
+                                ${partido.resultado.local}-${partido.resultado.visitante}
+                            </span>
+                            <span style="color: #666;">→ ${partido.ganador}</span>
+                        ` : `
+                            <button class="btn btn-generate" onclick="jugarPartidoPakistani('${fase}', ${index})">
+                                ${appData.userRole === 'pato' ? 'Jugar' : 'Simular'}
+                            </button>
+                        `}
+                    </div>
+                `;
+            });
+            return html;
+        }
+
+        async function jugarPartidoPakistani(fase, index) {
+            const partido = appData.pakistani.fases[fase][index];
+            const resultado = generarResultadoAleatorio();
+            
+            if (appData.userRole === 'pato') {
+                partido.jugado = true;
+                partido.resultado = resultado;
+                partido.ganador = resultado.local > resultado.visitante ? partido.local : partido.visitante;
+
+                if (fase === 'final') {
+                    const nuevoCampeon = partido.ganador;
+                    appData.pakistani.campeon = nuevoCampeon;
+                    // Mostrar popup de confirmación para Hall de la Fama
+                    setTimeout(() => {
+                        if (confirm(`¿Guardar a ${nuevoCampeon} como campeón de la Copa Pakistani en el Hall de la Fama (Temporada 6)?`)) {
+                            appData.hallFama.temporadas[6].pakistani = nuevoCampeon;
+                            saveData();
+                        }
+                    }, 500);
+                }
+
+                await saveData();
+                playGoalSound();
+            } else {
+                // Simulación para femboy
+                partido.resultado = resultado;
+                partido.ganador = resultado.local > resultado.visitante ? partido.local : partido.visitante;
+            }
+
+            showPakistani();
+        }
+
+        async function avanzarFasePakistani(faseActual) {
+            const partidos = appData.pakistani.fases[faseActual];
+            const ganadores = partidos.map(p => p.ganador);
+            
+            let siguienteFase;
+            if (faseActual === 'octavos') siguienteFase = 'cuartos';
+            else if (faseActual === 'cuartos') siguienteFase = 'semis';
+            else if (faseActual === 'semis') siguienteFase = 'final';
+            
+            if (siguienteFase === 'final') {
+                appData.pakistani.fases.final = [{
+                    local: ganadores[0],
+                    visitante: ganadores[1],
+                    jugado: false,
+                    resultado: null,
+                    ganador: null
+                }];
+            } else {
+                appData.pakistani.fases[siguienteFase] = [];
+                for (let i = 0; i < ganadores.length; i += 2) {
+                    appData.pakistani.fases[siguienteFase].push({
+                        local: ganadores[i],
+                        visitante: ganadores[i+1],
+                        jugado: false,
+                        resultado: null,
+                        ganador: null
+                    });
                 }
             }
-        }
-        
-        if (etsFases.campeon) {
-            const escudoCampeon = getEscudo(etsFases.campeon);
-            const campeonDiv = document.createElement('div');
-            campeonDiv.style.cssText = 'background: purple; color: white; padding: 15px; border-radius: 10px; margin: 15px 0; text-align: center; font-weight: bold; font-size: 18px;';
-            campeonDiv.innerHTML = `🏆 CAMPEÓN ETS: ${escudoCampeon}${etsFases.campeon} 🏆`;
-            etsDiv.appendChild(campeonDiv);
-        }
-    }
-
-    window.simularResultadoETS = function(fase, index, tipoPartido, esAdminParam){
-        const resultado = generarResultadoSimulado();
-        
-        if (!esAdminParam) {
-            // MODO FEMBOY: Solo muestra simulación
-            const partidos = etsDiv.querySelectorAll('.partido');
-            const partidoDiv = partidos[index];
-            const infoDiv = partidoDiv.querySelector('div div');
-            const resultadoTexto = tipoPartido === 'ida' ? 
-                `Ida: ${resultado.local}-${resultado.visitante}` : 
-                `Vuelta: ${resultado.local}-${resultado.visitante}`;
             
-            infoDiv.innerHTML = `<span style="color: #17a2b8; font-style: italic;">Simulado - ${resultadoTexto}</span>`;
-            return;
+            await saveData();
+            showPakistani();
         }
-        
-        // MODO PATO: Guarda resultado real
-        window.resultadoETS(fase, index, tipoPartido);
-    }
 
-    function getSiguienteFaseETS(faseActual) {
-        const fases = ['cuartos', 'semis', 'final'];
-        const index = fases.indexOf(faseActual);
-        return index < fases.length - 1 ? fases[index + 1] : null;
-    }
-
-    window.resultadoETS = function(fase, index, tipoPartido){
-        let partido = etsFases[fase][index];
-        let local = 0, visitante = 0;
-        for(let i = 0; i < 5; i++){
-            const tiro = Math.floor(Math.random() * 3);
-            if(tiro === 1) local++; 
-            else if(tiro === 2) visitante++;
-        }
-        
-        if (tipoPartido === 'ida') {
-            partido.ida.jugado = true;
-            partido.ida.resultado = { local, visitante };
-            partido.global.local += local;
-            partido.global.visitante += visitante;
-        } else {
-            partido.vuelta.jugado = true;
-            partido.vuelta.resultado = { local, visitante };
-            partido.global.local += visitante;
-            partido.global.visitante += local;
-        }
-        
-        if (partido.ida.jugado && partido.vuelta.jugado) {
-            if (partido.global.local > partido.global.visitante) {
-                partido.ganador = partido.local;
-            } else if (partido.global.visitante > partido.global.local) {
-                partido.ganador = partido.visitante;
-            } else {
-                partido.ganador = Math.random() > 0.5 ? partido.local : partido.visitante;
-            }
-            
-            if (fase === 'final' && partido.ganador) {
-                etsFases.campeon = partido.ganador;
+        function iniciarPakistani() {
+            if (confirm('¿Reiniciar la Copa Pakistani?')) {
+                appData.pakistani.fases = { octavos: [], cuartos: [], semis: [], final: [] };
+                appData.pakistani.campeon = null;
+                initializePakistani();
+                saveData();
+                showPakistani();
             }
         }
-        
-        guardarDatosETS();
-        mostrarETS(fase, tipoPartido);
-    }
 
-    // --- SUPERCOPA (CORREGIDO) ---
-    function iniciarSupercopa(){
-        superDiv.innerHTML = "";
-        const btnVolver = crearBotonVolver();
-        superDiv.appendChild(btnVolver);
-        
-        let ranking = Object.entries(tablaLiga).sort((a,b) => b[1].P - a[1].P);
-        let primeroLiga = ranking[0][0];
-        let ganadorPakistani = pakistaniFases.campeon;
-        
-        if (!ganadorPakistani) {
-            const mensajeDiv = document.createElement('div');
-            mensajeDiv.innerHTML = `
-                <h2>🔥 Supercopa</h2>
-                <p>Primero debe haber un campeón de la Copa Pakistani</p>
-                <button onclick="iniciarPakistani()" style="padding: 10px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                    Ir a Copa Pakistani
-                </button>
+        // COPA ETS - TOMA LOS 8 PRIMEROS DE LA LIGA
+        function getTop8Liga() {
+            const equiposOrdenados = [...appData.liga.equipos].sort((a, b) => {
+                const statsA = appData.liga.tabla[a] || { Pts: 0, DG: 0, GF: 0 };
+                const statsB = appData.liga.tabla[b] || { Pts: 0, DG: 0, GF: 0 };
+                
+                if (statsB.Pts !== statsA.Pts) return statsB.Pts - statsA.Pts;
+                if (statsB.DG !== statsA.DG) return statsB.DG - statsA.DG;
+                return statsB.GF - statsA.GF;
+            });
+            
+            return equiposOrdenados.slice(0, 8);
+        }
+
+        function initializeETS() {
+            const top8 = getTop8Liga();
+            top8.sort(() => Math.random() - 0.5);
+            
+            appData.ets.fases.cuartos = [];
+            for (let i = 0; i < 8; i += 2) {
+                appData.ets.fases.cuartos.push({
+                    local: top8[i],
+                    visitante: top8[i + 1],
+                    ida: { jugado: false, resultado: null },
+                    vuelta: { jugado: false, resultado: null },
+                    ganador: null
+                });
+            }
+        }
+
+        function showETS() {
+            const content = document.getElementById('tournamentContent');
+            content.innerHTML = `
+                <button class="back-btn" onclick="hideTournament()">🔙 Volver al Menú</button>
+                <h2>🌟 COPA ETS - ${etsFaseActual.toUpperCase()} (${etsTipoPartido.toUpperCase()})</h2>
+                
+                ${appData.ets.campeon ? `
+                    <div class="champion-badge">
+                        🏆 CAMPEÓN: ${appData.ets.campeon} 🏆
+                    </div>
+                ` : ''}
+                
+                <div style="text-align: center; margin: 20px 0;">
+                    <p style="color: #666; font-size: 1.1em;">
+                        Sistema de ida y vuelta - 8 equipos (top de la liga)
+                    </p>
+                    <p><small>Clasifican los 8 primeros de la tabla de la liga</small></p>
+                    <div style="margin: 10px 0;">
+                        <button class="btn ${etsTipoPartido === 'ida' ? 'btn-generate' : ''}" onclick="cambiarTipoPartidoETS('ida')">
+                            Partidos de Ida
+                        </button>
+                        <button class="btn ${etsTipoPartido === 'vuelta' ? 'btn-generate' : ''}" onclick="cambiarTipoPartidoETS('vuelta')">
+                            Partidos de Vuelta
+                        </button>
+                    </div>
+                    ${appData.userRole === 'pato' ? `
+                        <button class="btn btn-generate" onclick="iniciarETS()" style="margin: 10px;">
+                            Reiniciar Copa
+                        </button>
+                    ` : ''}
+                </div>
+                
+                <div class="fases-container">
+                    ${generarVistaETS()}
+                </div>
+
+                ${appData.userRole === 'pato' && puedeAvanzarETS() ? `
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button class="btn btn-advance" onclick="avanzarFaseETS()">
+                            🚀 Avanzar a ${getSiguienteFaseETS()}
+                        </button>
+                    </div>
+                ` : ''}
             `;
-            superDiv.appendChild(mensajeDiv);
-            return;
         }
-        
-        const escudoLiga = getEscudo(primeroLiga);
-        const escudoPakistani = getEscudo(ganadorPakistani);
-        
-        const botonTexto = esAdmin ? 'Generar Partido' : 'Simular Partido';
-        const botonClase = esAdmin ? 'generar' : 'generar simular';
-        
-        const contenidoDiv = document.createElement('div');
-        contenidoDiv.innerHTML = `
-            <h2>🔥 Supercopa</h2>
-            <p>Campeón de Liga vs Campeón de Copa Pakistani</p>
-            <div class="partido">
-                <span class="team-cell">${escudoLiga}${primeroLiga} 🆚 ${ganadorPakistani}${escudoPakistani}</span>
-                <button class="${botonClase}" onclick="window.simularResultadoSupercopa(${esAdmin})">
-                    ${botonTexto}
-                </button>
-                <span class="result"></span>
-            </div>
-        `;
-        superDiv.appendChild(contenidoDiv);
-    }
 
-    window.simularResultadoSupercopa = function(esAdminParam){
-        const resultado = generarResultadoSimulado();
-        
-        if (!esAdminParam) {
-            // MODO FEMBOY: Solo muestra simulación
-            const span = superDiv.querySelector('.result');
-            span.innerHTML = `<strong style="color: #17a2b8; font-style: italic;">Simulado: ${resultado.local}-${resultado.visitante}</strong>`;
-            return;
+        function cambiarTipoPartidoETS(tipo) {
+            etsTipoPartido = tipo;
+            showETS();
         }
-        
-        // MODO PATO: Guarda resultado real
-        window.resultadoSupercopa();
-    }
 
-    window.resultadoSupercopa = function(){
-        let local = 0, visitante = 0;
-        for(let i = 0; i < 5; i++){
-            const tiro = Math.floor(Math.random() * 3);
-            if(tiro === 1) local++; 
-            else if(tiro === 2) visitante++;
+        function generarVistaETS() {
+            const partidos = appData.ets.fases[etsFaseActual];
+            if (!partidos || partidos.length === 0) return '<p>No hay partidos en esta fase.</p>';
+
+            let html = `<h3>${etsFaseActual.charAt(0).toUpperCase() + etsFaseActual.slice(1)} de Final</h3>`;
+            partidos.forEach((partido, index) => {
+                const partidoJugado = etsTipoPartido === 'ida' ? partido.ida.jugado : partido.vuelta.jugado;
+                const resultado = etsTipoPartido === 'ida' ? partido.ida.resultado : partido.vuelta.resultado;
+                
+                let infoGlobal = '';
+                if (partido.ida.jugado && partido.vuelta.jugado) {
+                    const globalLocal = partido.ida.resultado.local + partido.vuelta.resultado.visitante;
+                    const globalVisitante = partido.ida.resultado.visitante + partido.vuelta.resultado.local;
+                    infoGlobal = `<br><small>Global: ${globalLocal}-${globalVisitante} → ${partido.ganador || 'Por definir'}</small>`;
+                }
+
+                html += `
+                    <div class="match ${partidoJugado ? 'played' : ''}">
+                        <div class="teams">
+                            <strong>${partido.local}</strong>
+                            <span class="vs">VS</span>
+                            <strong>${partido.visitante}</strong>
+                        </div>
+                        ${partidoJugado ? `
+                            <span class="result" style="color: #28a745;">
+                                ${resultado.local}-${resultado.visitante}
+                            </span>
+                            ${infoGlobal}
+                        ` : `
+                            <button class="btn btn-generate" onclick="jugarPartidoETS(${index})">
+                                ${appData.userRole === 'pato' ? 'Jugar ' + etsTipoPartido : 'Simular ' + etsTipoPartido}
+                            </button>
+                        `}
+                    </div>
+                `;
+            });
+            return html;
         }
-        
-        let span = superDiv.querySelector('.result');
-        span.innerHTML = `<strong style="color: green; font-size: 18px;">${local}-${visitante}</strong>`;
-        
-        let ganador = local > visitante ? 'Campeón de Liga' : 
-                     visitante > local ? 'Campeón de Copa Pakistani' : 'Empate';
-        
-        const resultadoDiv = document.createElement('div');
-        resultadoDiv.style.cssText = 'background: #ffcc00; padding: 15px; border-radius: 10px; margin: 15px 0; text-align: center; font-weight: bold;';
-        resultadoDiv.innerHTML = `🏆 GANADOR: ${ganador} 🏆`;
-        superDiv.appendChild(resultadoDiv);
-    }
 
-    // --- BOTÓN NUEVA TEMPORADA ---
-    window.reiniciarTemporada = function() {
-        if (!esAdmin) {
-            alert("❌ Solo el PATO puede reiniciar la temporada");
-            return;
+        async function jugarPartidoETS(index) {
+            const partido = appData.ets.fases[etsFaseActual][index];
+            const resultado = generarResultadoAleatorio();
+            
+            if (appData.userRole === 'pato') {
+                if (etsTipoPartido === 'ida') {
+                    partido.ida.jugado = true;
+                    partido.ida.resultado = resultado;
+                } else {
+                    partido.vuelta.jugado = true;
+                    partido.vuelta.resultado = resultado;
+                }
+
+                // Calcular ganador si ambos partidos están jugados
+                if (partido.ida.jugado && partido.vuelta.jugado) {
+                    const globalLocal = partido.ida.resultado.local + partido.vuelta.resultado.visitante;
+                    const globalVisitante = partido.ida.resultado.visitante + partido.vuelta.resultado.local;
+                    
+                    if (globalLocal > globalVisitante) {
+                        partido.ganador = partido.local;
+                    } else if (globalVisitante > globalLocal) {
+                        partido.ganador = partido.visitante;
+                    } else {
+                        // Empate - ganador por penales (random)
+                        partido.ganador = Math.random() > 0.5 ? partido.local : partido.visitante;
+                    }
+
+                    if (etsFaseActual === 'final' && partido.ganador) {
+                        const nuevoCampeon = partido.ganador;
+                        appData.ets.campeon = nuevoCampeon;
+                        // Mostrar popup de confirmación para Hall de la Fama
+                        setTimeout(() => {
+                            if (confirm(`¿Guardar a ${nuevoCampeon} como campeón de la Copa ETS en el Hall de la Fama (Temporada 6)?`)) {
+                                appData.hallFama.temporadas[6].ets = nuevoCampeon;
+                                saveData();
+                            }
+                        }, 500);
+                    }
+                }
+
+                await saveData();
+                playGoalSound();
+            } else {
+                // Simulación para femboy
+                if (etsTipoPartido === 'ida') {
+                    partido.ida.resultado = resultado;
+                } else {
+                    partido.vuelta.resultado = resultado;
+                }
+            }
+
+            showETS();
         }
-        
-        if (confirm('¿Estás seguro de que querés empezar una nueva temporada? Se borrarán TODOS los datos.')) {
-            localStorage.removeItem('tablaLiga');
-            localStorage.removeItem('partidosJugados');
-            localStorage.removeItem('fixtureLiga');
-            localStorage.removeItem('pakistaniFases');
-            localStorage.removeItem('etsFases');
-            localStorage.removeItem('esAdmin');
-            location.reload();
+
+        function puedeAvanzarETS() {
+            const partidos = appData.ets.fases[etsFaseActual];
+            return partidos && partidos.every(p => p.ida.jugado && p.vuelta.jugado) && 
+                   appData.ets.fases[getSiguienteFaseETS()].length === 0;
         }
-    }
 
-    // Cargar datos de las copas
-    cargarDatosPakistani();
-    cargarDatosETS();
-    
-    // Iniciar aplicación
-    generarLiga();
-}
+        function getSiguienteFaseETS() {
+            if (etsFaseActual === 'cuartos') return 'semis';
+            if (etsFaseActual === 'semis') return 'final';
+            return null;
+        }
 
-// --- INICIAR TODO ---
-mostrarSeleccionRol();
-</script>
+        async function avanzarFaseETS() {
+            const partidos = appData.ets.fases[etsFaseActual];
+            const ganadores = partidos.map(p => p.ganador);
+            
+            const siguienteFase = getSiguienteFaseETS();
+            if (siguienteFase) {
+                appData.ets.fases[siguienteFase] = [];
+                for (let i = 0; i < ganadores.length; i += 2) {
+                    appData.ets.fases[siguienteFase].push({
+                        local: ganadores[i],
+                        visitante: ganadores[i+1],
+                        ida: { jugado: false, resultado: null },
+                        vuelta: { jugado: false, resultado: null },
+                        ganador: null
+                    });
+                }
+                etsFaseActual = siguienteFase;
+                etsTipoPartido = 'ida';
+                await saveData();
+            }
+            showETS();
+        }
+
+        function iniciarETS() {
+            if (confirm('¿Reiniciar la Copa ETS?')) {
+                appData.ets.fases = { cuartos: [], semis: [], final: [] };
+                appData.ets.campeon = null;
+                etsFaseActual = 'cuartos';
+                etsTipoPartido = 'ida';
+                initializeETS();
+                saveData();
+                showETS();
+            }
+        }
+
+        // SUPERCOPA - PERMITE SIMULAR SIN TENER CAMPECONES
+        function showSupercopa() {
+            const campeonLiga = appData.liga.campeon || "Por definir";
+            const campeonPakistani = appData.pakistani.campeon || "Por definir";
+            const campeonETS = appData.ets.campeon || "Por definir";
+            
+            const content = document.getElementById('tournamentContent');
+            content.innerHTML = `
+                <button class="back-btn" onclick="hideTournament()">🔙 Volver al Menú</button>
+                <h2>🔥 SUPERCOPA</h2>
+                
+                ${appData.supercopa.campeon ? `
+                    <div class="champion-badge">
+                        🏆 CAMPEÓN: ${appData.supercopa.campeon} 🏆
+                    </div>
+                ` : ''}
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <div style="margin: 15px 0;">
+                        <p><strong>Campeón de Liga:</strong> ${campeonLiga}</p>
+                        <p><strong>Campeón de Pakistani:</strong> ${campeonPakistani}</p>
+                        ${campeonETS !== "Por definir" ? `<p><strong>Campeón de ETS:</strong> ${campeonETS}</p>` : ''}
+                    </div>
+
+                    <div class="match" style="max-width: 400px; margin: 20px auto;">
+                        <div class="teams">
+                            <strong>${campeonLiga}</strong>
+                            <span class="vs">VS</span>
+                            <strong>${campeonPakistani}</strong>
+                        </div>
+                        ${appData.supercopa.partido ? `
+                            <span class="result" style="color: #28a745;">
+                                ${appData.supercopa.partido.local}-${appData.supercopa.partido.visitante}
+                            </span>
+                            ${appData.supercopa.campeon ? `<div style="margin-top: 10px; color: #666;">🏆 ${appData.supercopa.campeon}</div>` : ''}
+                        ` : `
+                            <button class="btn btn-generate" onclick="jugarSupercopa()">
+                                ${appData.userRole === 'pato' ? 'Jugar Partido' : 'Simular Partido'}
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+
+        async function jugarSupercopa() {
+            const resultado = generarResultadoAleatorio();
+            const campeonLiga = appData.liga.campeon || "Campeón de Liga";
+            const campeonPakistani = appData.pakistani.campeon || "Campeón de Pakistani";
+            
+            if (appData.userRole === 'pato') {
+                appData.supercopa.partido = resultado;
+                appData.supercopa.campeon = resultado.local > resultado.visitante ? campeonLiga : campeonPakistani;
+                
+                // Mostrar popup de confirmación para Hall de la Fama
+                setTimeout(() => {
+                    if (confirm(`¿Guardar a ${appData.supercopa.campeon} como campeón de la Supercopa en el Hall de la Fama (Temporada 6)?`)) {
+                        appData.hallFama.temporadas[6].supercopa = appData.supercopa.campeon;
+                        saveData();
+                    }
+                }, 500);
+
+                await saveData();
+                playGoalSound();
+            } else {
+                // Simulación para femboy
+                appData.simulaciones.supercopa = {
+                    partido: resultado,
+                    campeon: resultado.local > resultado.visitante ? campeonLiga : campeonPakistani
+                };
+            }
+
+            showSupercopa();
+        }
+
+        // HALL DE LA FAMA
+        function showHallFama() {
+            const content = document.getElementById('tournamentContent');
+            content.innerHTML = `
+                <button class="back-btn" onclick="hideTournament()">🔙 Volver al Menú</button>
+                <h2>🏛️ HALL DE LA FAMA</h2>
+                
+                <div class="hall-fama-container">
+                    <div class="temporada-selector" id="temporadaSelector"></div>
+                    <div id="campeonesTemporada"></div>
+                </div>
+            `;
+
+            generarSelectorTemporadas();
+            mostrarCampeonesTemporada(temporadaActualHallFama);
+        }
+
+        function generarSelectorTemporadas() {
+            const selector = document.getElementById('temporadaSelector');
+            let html = '';
+            
+            for (let i = 1; i <= 6; i++) {
+                html += `
+                    <button class="temporada-btn ${i === temporadaActualHallFama ? 'active' : ''}" 
+                            onclick="cambiarTemporadaHallFama(${i})">
+                        Temporada ${i}
+                    </button>
+                `;
+            }
+            
+            selector.innerHTML = html;
+        }
+
+        function cambiarTemporadaHallFama(temporada) {
+            temporadaActualHallFama = temporada;
+            generarSelectorTemporadas();
+            mostrarCampeonesTemporada(temporada);
+        }
+
+        function mostrarCampeonesTemporada(temporada) {
+            const container = document.getElementById('campeonesTemporada');
+            const campeones = appData.hallFama.temporadas[temporada];
+            
+            let html = `
+                <h3 style="text-align: center; margin-bottom: 20px; color: #333;">
+                    Campeones - Temporada ${temporada}
+                </h3>
+                <div class="campeones-grid">
+            `;
+            
+            if (campeones.liga) {
+                html += `
+                    <div class="campeon-card liga">
+                        <div class="campeon-titulo">🏆 LIGA</div>
+                        <div class="campeon-equipo">${campeones.liga}</div>
+                    </div>
+                `;
+            }
+            
+            if (campeones.pakistani) {
+                html += `
+                    <div class="campeon-card pakistani">
+                        <div class="campeon-titulo">🏅 COPA PAKISTANI</div>
+                        <div class="campeon-equipo">${campeones.pakistani}</div>
+                    </div>
+                `;
+            }
+            
+            if (campeones.ets && temporada >= 5) {
+                html += `
+                    <div class="campeon-card ets">
+                        <div class="campeon-titulo">🌟 COPA ETS</div>
+                        <div class="campeon-equipo">${campeones.ets}</div>
+                    </div>
+                `;
+            }
+            
+            if (campeones.supercopa) {
+                html += `
+                    <div class="campeon-card supercopa">
+                        <div class="campeon-titulo">🔥 SUPERCOPA</div>
+                        <div class="campeon-equipo">${campeones.supercopa}</div>
+                    </div>
+                `;
+            }
+            
+            html += `</div>`;
+            
+            if (temporada === 6 && Object.values(campeones).every(c => c === null)) {
+                html += `
+                    <div style="text-align: center; color: #666; margin-top: 20px;">
+                        ⏳ Temporada en curso...
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // REINICIAR TODOS LOS TORNEOS
+        async function resetAllTournaments() {
+            if (confirm('¿ESTÁS SEGURO DE QUE QUERÉS REINICIAR TODOS LOS TORNEOS?\n\nSe borrarán TODOS los resultados y se empezará desde cero.')) {
+                appData.liga.tabla = {};
+                appData.liga.partidosJugados = {};
+                appData.liga.fixture = [];
+                appData.liga.campeon = null;
+                appData.liga.historialPosiciones = [];
+                
+                appData.pakistani.fases = { octavos: [], cuartos: [], semis: [], final: [] };
+                appData.pakistani.campeon = null;
+                
+                appData.ets.fases = { cuartos: [], semis: [], final: [] };
+                appData.ets.campeon = null;
+                etsFaseActual = 'cuartos';
+                etsTipoPartido = 'ida';
+                
+                appData.supercopa.partido = null;
+                appData.supercopa.campeon = null;
+                
+                appData.hallFama.temporadas[6] = { liga: null, pakistani: null, ets: null, supercopa: null };
+                
+                appData.simulaciones = {
+                    liga: {},
+                    pakistani: {},
+                    ets: {},
+                    supercopa: {}
+                };
+
+                initializeData();
+                alert('✅ Todos los torneos han sido reiniciados');
+                showLiga();
+            }
+        }
+
+        // Inicializar la aplicación
+        window.onload = function() {
+            console.log('🏆 COPA PISTÓN - Edición Definitiva 🏆');
+        };
+    </script>
 </body>
 </html>
